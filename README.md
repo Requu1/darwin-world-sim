@@ -1,0 +1,3 @@
+Szymon Potępa
+
+Pory roku
