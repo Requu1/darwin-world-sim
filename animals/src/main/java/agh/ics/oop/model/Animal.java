@@ -1,20 +1,23 @@
 package agh.ics.oop.model;
 
+import java.util.ArrayList;
+
 public class Animal implements WorldElement {
     private final static Vector2d DEFAULT_POS = new Vector2d(2, 2);
 
     private MapDirection facingDirection;
     private Vector2d posVector;
+    private int energy;
+    private ArrayList<Integer> genome;
+    private int currGenomeIdx;
 
-    public Animal() {
-        this(DEFAULT_POS);
-    }
-
-
-    public Animal(Vector2d posVector) {
+    public Animal(Vector2d posVector, int energy, ArrayList<Integer> genome) {
         this.posVector = posVector;
+        this.energy = energy;
+        this.genome = genome;
         this.facingDirection = MapDirection.NORTH;
     }
+
 
     public MapDirection getFacingDirection() {
         return this.facingDirection;
@@ -29,9 +32,13 @@ public class Animal implements WorldElement {
     public String toString() {
         return switch (this.facingDirection) {
             case NORTH -> "N";
+            case NORTH_EAST -> "NE";
+            case NORTH_WEST -> "NW";
             case WEST -> "W";
             case EAST -> "E";
             case SOUTH -> "S";
+            case SOUTH_EAST -> "SE";
+            case SOUTH_WEST -> "SW";
         };
     }
 
@@ -40,33 +47,12 @@ public class Animal implements WorldElement {
         return this.posVector.equals(position);
     }
 
-    boolean move(MoveDirection direction, MoveValidator validator) {
-        boolean animalHasMoved = false;
-        switch (direction) {
-            case MoveDirection.RIGHT -> {
-                this.facingDirection = MapDirection.next(facingDirection);
-                animalHasMoved = true;
-            }
-            case MoveDirection.LEFT -> {
-                this.facingDirection = MapDirection.previous(facingDirection);
-                animalHasMoved = true;
-            }
-            case MoveDirection.FORWARD -> {
-                Vector2d newPosVector = this.posVector.add(facingDirection.toUnitVector());
-                if (validator.canMoveTo(newPosVector)) {
-                    this.posVector = newPosVector;
-                    animalHasMoved = true;
-                }
-            }
-            case MoveDirection.BACKWARD -> {
-                Vector2d newPosVector = this.posVector.add(facingDirection.toUnitVector().opposite());
-                if (validator.canMoveTo(newPosVector)) {
-                    this.posVector = newPosVector;
-                    animalHasMoved = true;
-                }
-            }
+    void move(MoveValidator validator) {
+        for (int i = 0; i < genome.get(currGenomeIdx); i++) {
+            this.facingDirection = MapDirection.next(facingDirection);
         }
-        return animalHasMoved;
+        this.posVector = posVector.add(this.facingDirection.toUnitVector());
+        this.currGenomeIdx = (currGenomeIdx + 1) % genome.size();
     }
 
 }

@@ -1,25 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
-            fx:controller="agh.ics.oop.presenter.SimulationPresenter"
+            fx:controller="agh.ics.oop.presenter.SimulationStarterPresenter"
 >
     <center>
-        <StackPane>
-            <VBox alignment="CENTER" spacing="10">
-                <Label text="All animals will be living here!" textAlignment="CENTER"/>
-                <TextField fx:id="inputTextField" maxWidth="250"/>
-                <Button text="Confirm args" onAction="#onSimulationStartClicked"/>
+        <HBox alignment="CENTER" spacing="100">
+
+            <VBox alignment="CENTER_LEFT" spacing="15">
+                <VBox spacing="5">
+                    <Label text="Map width" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="mapWidthInput" maxWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Map height" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="mapHeightInput" maxWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Starting plants count" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="startingPlantsCountInput" maxWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Energy restored after eating" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="plantEnergyRestoreInput" maxWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Plants growing each day" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="dailyGrowingPlantsInput" maxWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Starting animal count" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="startingAnimalCountInput" maxWidth="200"/>
+                </VBox>
             </VBox>
-        </StackPane>
+
+            <VBox alignment="CENTER_LEFT" spacing="15">
+                <VBox spacing="5">
+                    <Label text="Default animal energy" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="defaultEnergyInput" maxWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Animal daily energy loss" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="energyLossInput" maxWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Energy for animal to be full" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="canReproduceEnergyForAnimalInput" maxWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Energy needed to reproduce" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="reproductionEnergyInput" maxWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Genome length" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="genomeLengthInput" maxWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Mutations (Min / Max)" style="-fx-font-weight: bold;"/>
+                    <HBox spacing="10">
+                        <TextField fx:id="minMutationsInput" prefWidth="95" promptText="Min"/>
+                        <TextField fx:id="maxMutationsInput" prefWidth="95" promptText="Max"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+        </HBox>
     </center>
+
+    <bottom>
+        <VBox alignment="CENTER" style="-fx-padding: 30 0 0 0;">
+            <Button text="Start Simulation"
+                    onAction="#onSimulationStartClicked"
+                    prefWidth="250"
+                    prefHeight="50"
+                    style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-cursor: hand;"/>
+        </VBox>
+    </bottom>
 
 
 </BorderPane>

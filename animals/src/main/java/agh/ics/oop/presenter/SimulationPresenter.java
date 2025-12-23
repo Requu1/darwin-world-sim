@@ -1,9 +1,5 @@
 package agh.ics.oop.presenter;
 
-import agh.ics.oop.OptionsParser;
-import agh.ics.oop.Simulation;
-import agh.ics.oop.SimulationApp;
-import agh.ics.oop.World;
 import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -132,23 +127,7 @@ public class SimulationPresenter implements MapChangeListener {
         graphics.setFont(new Font("Arial", size));
         graphics.setFill(color);
     }
-
-    @FXML
-    public void onSimulationStartClicked() {
-        ArrayList<MoveDirection> directions = OptionsParser.parse(inputTextField.getText().split(" "));
-
-        SimulationApp simApp = new SimulationApp();
-        GrassField map = new GrassField(10);
-        try {
-            simApp.launchSimulation(map);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Simulation simulation = new Simulation(World.generatePositions(), directions, map);
-        Thread thread = new Thread(simulation);
-        thread.start();
-
-    }
+    
 
     @Override
     public void mapChanged(WorldMap map, String message) {

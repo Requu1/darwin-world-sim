@@ -45,17 +45,17 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public void move(Animal animal, MoveDirection direction) {
+    public void move(Animal animal) {
         Vector2d preMovePosition = animal.getPosition();
         MapDirection preMoveDirection = animal.getFacingDirection();
-        boolean animalHasMoved = animal.move(direction, this);
-        if (animalHasMoved) {
-            removeAnimalFromPos(preMovePosition);
-            this.animals.put(animal.getPosition(), animal);
-            informListeners(String.format("%s ((%d,%d), %s) from: ((%d,%d), %s):",
-                    MOVE_MESSAGE, animal.getPosition().getX(), animal.getPosition().getY(), animal.getFacingDirection()
-                    , preMovePosition.getX(), preMovePosition.getY(), preMoveDirection));
-        }
+        animal.move(this);
+
+        removeAnimalFromPos(preMovePosition);
+        this.animals.put(animal.getPosition(), animal);
+        informListeners(String.format("%s ((%d,%d), %s) from: ((%d,%d), %s):",
+                MOVE_MESSAGE, animal.getPosition().getX(), animal.getPosition().getY(), animal.getFacingDirection()
+                , preMovePosition.getX(), preMovePosition.getY(), preMoveDirection));
+
     }
 
     @Override
