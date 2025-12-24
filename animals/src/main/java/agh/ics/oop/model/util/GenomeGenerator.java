@@ -14,4 +14,8 @@ public class GenomeGenerator {
         }
         return newGenome;
     }
+
+    public static ArrayList<Integer> generateGenomeFromReproducing(ArrayList<Integer> genomX, ArrayList<Integer> genomY) {
+
+    }
 }

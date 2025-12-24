@@ -12,56 +12,34 @@ public class Simulation implements Runnable {
     private static final int DAYS = 100;
 
     private final ArrayList<Animal> animals = new ArrayList<>();
+    private final ArrayList<Plant> plant = new ArrayList<>();
     private final WorldMap map;
 
     private final int startingPlantCount;
-    private final int energyRestoredByPlant;
-    private final int plantsGrowingDaily;
     private final int startingAnimalCount;
     private final int startingAnimalEnergy;
-    private final int dailyEnergyLoss;
-    private final int minimalEnergyForReproduction;
-    private final int usedEnergyForReproduction;
-    private final int minMutationCount;
-    private final int maxMutationCount;
     private final int genomeLength;
 
 
     public Simulation(
             ArrayList<Vector2d> animalsPositions,
+            ArrayList<Vector2d> plantsPositions,
             WorldMap map,
             int startingPlantCount,
-            int energyRestoredByPlant,
-            int plantsGrowingDaily,
             int startingAnimalCount,
             int startingAnimalEnergy,
-            int dailyEnergyLoss,
-            int minimalEnergyForReproduction,
-            int usedEnergyForReproduction,
-            int minMutationCount,
-            int maxMutationCount,
             int genomeLength
     ) {
         this.map = map;
         this.startingPlantCount = startingPlantCount;
-        this.energyRestoredByPlant = energyRestoredByPlant;
-        this.plantsGrowingDaily = plantsGrowingDaily;
         this.startingAnimalCount = startingAnimalCount;
         this.startingAnimalEnergy = startingAnimalEnergy;
-        this.dailyEnergyLoss = dailyEnergyLoss;
-        this.minimalEnergyForReproduction = minimalEnergyForReproduction;
-        this.usedEnergyForReproduction = usedEnergyForReproduction;
-        if (minMutationCount > maxMutationCount) {
-            throw new IllegalArgumentException("Minimal mutation count cannot be greater than maximal.");
-        }
-        this.minMutationCount = minMutationCount;
-        this.maxMutationCount = maxMutationCount;
         this.genomeLength = genomeLength;
-        initializeAnimals(animalsPositions);
+        initializeAnimalsAndPlants(animalsPositions, plantsPositions);
     }
 
 
-    private void initializeAnimals(List<Vector2d> animalsPositions) {
+    private void initializeAnimalsAndPlants(List<Vector2d> animalsPositions, List<Vector2d> plantsPositions) {
         for (Vector2d pos : animalsPositions) {
             try {
                 Animal animal = new AnimalBuilder()
@@ -71,6 +49,14 @@ public class Simulation implements Runnable {
                         .createAnimal();
                 map.place(animal);
                 this.animals.add(animal);
+            } catch (IncorrectPositionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Vector2d pos : plantsPositions) {
+            try {
+                map.growPlant(new Plant(pos));
             } catch (IncorrectPositionException e) {
                 e.printStackTrace();
             }
@@ -89,7 +75,9 @@ public class Simulation implements Runnable {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                map.move(this.animals.get(currAnimalIndex));
+                Animal currAnimal = this.animals.get(currAnimalIndex);
+                map.move(currAnimal);
+                map.updateEnergy(currAnimal);
                 currAnimalIndex = (currAnimalIndex + 1) % animalsCount;
             }
         } else {

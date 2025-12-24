@@ -3,7 +3,8 @@ package agh.ics.oop.presenter;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.SimulationApp;
 import agh.ics.oop.World;
-import agh.ics.oop.model.GrassField;
+import agh.ics.oop.model.RectangularMap;
+import agh.ics.oop.model.util.MapBuilder;
 import agh.ics.oop.model.util.SimulationBuilder;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -41,26 +42,28 @@ public class SimulationStarterPresenter {
     @FXML
     public void onSimulationStartClicked() {
         SimulationApp simApp = new SimulationApp();
-        GrassField map = new GrassField(10);
+        RectangularMap map = new MapBuilder()
+                .withHeight(getIntFromTextField(mapHeightInput))
+                .withWidth(getIntFromTextField(mapWidthInput))
+                .withDailyEnergyLoss(getIntFromTextField(energyLossInput))
+                .withMaxMutationsCount(getIntFromTextField(maxMutationsInput))
+                .withMinMutationsCount(getIntFromTextField(minMutationsInput))
+                .withEnergyRestoredByPlant(getIntFromTextField(plantEnergyRestoreInput))
+                .withPlantsGrowingDaily(getIntFromTextField(dailyGrowingPlantsInput))
+                .withUsedEnergyForReproduction(getIntFromTextField(reproductionEnergyInput))
+                .withMinimalEnergyForReproduction(getIntFromTextField(canReproduceEnergyForAnimalInput))
+                .create();
         try {
             simApp.launchSimulation(map);
         } catch (IOException e) {
             e.printStackTrace();
         }
         Simulation simulation = new SimulationBuilder()
-                .withPositions(World.generatePositions())
+                .withAnimalsPositions(World.generatePositions(getIntFromTextField(startingAnimalCountInput)))
+                .withPlantsPositions(World.generatePositions(getIntFromTextField(startingPlantsCountInput)))
                 .withMap(map)
-                .withDailyEnergyLoss(getIntFromTextField(energyLossInput))
                 .withGenomeLength(getIntFromTextField(genomeLengthInput))
-                .withEnergyRestoredByPlant(getIntFromTextField(plantEnergyRestoreInput))
-                .withMaxMutationCount(getIntFromTextField(maxMutationsInput))
-                .withMinMutationCount(getIntFromTextField(minMutationsInput))
-                .withStartingAnimalCount(getIntFromTextField(startingAnimalCountInput))
-                .withMinimalEnergyForReproduction(getIntFromTextField(canReproduceEnergyForAnimalInput))
-                .withPlantsGrowingDaily(getIntFromTextField(dailyGrowingPlantsInput))
                 .withStartingAnimalEnergy((getIntFromTextField(defaultEnergyInput)))
-                .withStartPlantCount(getIntFromTextField(startingPlantsCountInput))
-                .withUsedEnergyForReproduction(getIntFromTextField(reproductionEnergyInput))
                 .build();
         Thread thread = new Thread(simulation);
         thread.start();

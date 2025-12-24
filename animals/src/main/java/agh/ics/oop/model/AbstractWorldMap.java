@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public abstract class AbstractWorldMap implements WorldMap {
     protected final Map<Vector2d, Animal> animals = new HashMap<>();
+    protected final Map<Vector2d, Plant> plants = new HashMap<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
     protected final UUID id;
 
@@ -49,13 +50,23 @@ public abstract class AbstractWorldMap implements WorldMap {
         Vector2d preMovePosition = animal.getPosition();
         MapDirection preMoveDirection = animal.getFacingDirection();
         animal.move(this);
-
         removeAnimalFromPos(preMovePosition);
         this.animals.put(animal.getPosition(), animal);
         informListeners(String.format("%s ((%d,%d), %s) from: ((%d,%d), %s):",
                 MOVE_MESSAGE, animal.getPosition().getX(), animal.getPosition().getY(), animal.getFacingDirection()
                 , preMovePosition.getX(), preMovePosition.getY(), preMoveDirection));
 
+    }
+
+
+    @Override
+    public void updateEnergy(Animal animal) {
+
+    }
+
+    @Override
+    public void growPlant(Plant plant) throws IncorrectPositionException {
+        this.plants.put(plant.getPosition(), plant);
     }
 
     @Override
@@ -71,13 +82,16 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void place(Animal animal) throws IncorrectPositionException {
-
         if (canMoveTo(animal.getPosition())) {
             this.animals.put(animal.getPosition(), animal);
             informListeners(String.format("%s ((%d,%d),%s)", ADD_MESSAGE, animal.getPosition().getX(), animal.getPosition().getY(), animal.getFacingDirection()));
         } else {
             throw new IncorrectPositionException(animal.getPosition());
         }
+    }
+
+    public void placePlant(Plant plant) {
+        this.plants.put(plant.getPosition(), plant);
     }
 
 

@@ -48,4 +48,8 @@ public interface WorldMap extends MoveValidator {
     Boundary getCurrentBounds();
 
     UUID getId();
+
+    void updateEnergy(Animal animal);
+
+    void growPlant(Plant plant) throws IncorrectPositionException;
 }
