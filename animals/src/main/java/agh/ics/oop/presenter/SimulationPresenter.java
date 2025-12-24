@@ -92,7 +92,7 @@ public class SimulationPresenter implements MapChangeListener {
     private boolean canDraw(WorldElement element, HashMap<Vector2d, WorldElement> drawnElements) {
         if (element instanceof Animal) {
             return true;
-        } else return !(element instanceof Grass) || drawnElements.get(element.getPosition()) == null;
+        } else return !(element instanceof Plant) || drawnElements.get(element.getPosition()) == null;
     }
 
     private void drawAxes(GraphicsContext graphics) {
@@ -127,7 +127,7 @@ public class SimulationPresenter implements MapChangeListener {
         graphics.setFont(new Font("Arial", size));
         graphics.setFill(color);
     }
-    
+
 
     @Override
     public void mapChanged(WorldMap map, String message) {

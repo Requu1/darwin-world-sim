@@ -1,9 +1,14 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.util.GenomeGenerator;
+
 import java.util.ArrayList;
 
 public class Animal implements WorldElement {
+    private final static int DEFAULT_GENOME_LENGTH = 10;
     private final static Vector2d DEFAULT_POS = new Vector2d(2, 2);
+    private final static int DEFAULT_ENERGY = 100;
+    private final static ArrayList<Integer> DEFAULT_GENOME = GenomeGenerator.generateNewGenome(10);
 
     private MapDirection facingDirection;
     private Vector2d posVector;
@@ -53,6 +58,10 @@ public class Animal implements WorldElement {
         }
         this.posVector = posVector.add(this.facingDirection.toUnitVector());
         this.currGenomeIdx = (currGenomeIdx + 1) % genome.size();
+    }
+
+    void updateEnergy(int amount) {
+        this.energy += amount;
     }
 
 }

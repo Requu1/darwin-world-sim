@@ -13,66 +13,66 @@
             <VBox alignment="CENTER_LEFT" spacing="15">
                 <VBox spacing="5">
                     <Label text="Map width" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="mapWidthInput" maxWidth="200"/>
+                    <TextField fx:id="mapWidthInput" text="10" maxWidth="200"/>
                 </VBox>
 
                 <VBox spacing="5">
                     <Label text="Map height" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="mapHeightInput" maxWidth="200"/>
+                    <TextField fx:id="mapHeightInput" text="10" maxWidth="200"/>
                 </VBox>
 
                 <VBox spacing="5">
                     <Label text="Starting plants count" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="startingPlantsCountInput" maxWidth="200"/>
+                    <TextField fx:id="startingPlantsCountInput" text="10" maxWidth="200"/>
                 </VBox>
 
                 <VBox spacing="5">
                     <Label text="Energy restored after eating" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="plantEnergyRestoreInput" maxWidth="200"/>
+                    <TextField fx:id="plantEnergyRestoreInput" text="25" maxWidth="200"/>
                 </VBox>
 
                 <VBox spacing="5">
                     <Label text="Plants growing each day" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="dailyGrowingPlantsInput" maxWidth="200"/>
+                    <TextField fx:id="dailyGrowingPlantsInput" text="5" maxWidth="200"/>
                 </VBox>
 
                 <VBox spacing="5">
                     <Label text="Starting animal count" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="startingAnimalCountInput" maxWidth="200"/>
+                    <TextField fx:id="startingAnimalCountInput" text="5" maxWidth="200"/>
                 </VBox>
             </VBox>
 
             <VBox alignment="CENTER_LEFT" spacing="15">
                 <VBox spacing="5">
                     <Label text="Default animal energy" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="defaultEnergyInput" maxWidth="200"/>
+                    <TextField fx:id="defaultEnergyInput" text="50" maxWidth="200"/>
                 </VBox>
 
                 <VBox spacing="5">
                     <Label text="Animal daily energy loss" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="energyLossInput" maxWidth="200"/>
+                    <TextField fx:id="energyLossInput" text="10" maxWidth="200"/>
                 </VBox>
 
                 <VBox spacing="5">
                     <Label text="Energy for animal to be full" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="canReproduceEnergyForAnimalInput" maxWidth="200"/>
+                    <TextField fx:id="canReproduceEnergyForAnimalInput" text="50" maxWidth="200"/>
                 </VBox>
 
                 <VBox spacing="5">
                     <Label text="Energy needed to reproduce" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="reproductionEnergyInput" maxWidth="200"/>
+                    <TextField fx:id="reproductionEnergyInput" text="20" maxWidth="200"/>
                 </VBox>
 
                 <VBox spacing="5">
                     <Label text="Genome length" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="genomeLengthInput" maxWidth="200"/>
+                    <TextField fx:id="genomeLengthInput" text="10" maxWidth="200"/>
                 </VBox>
 
                 <VBox spacing="5">
                     <Label text="Mutations (Min / Max)" style="-fx-font-weight: bold;"/>
                     <HBox spacing="10">
-                        <TextField fx:id="minMutationsInput" prefWidth="95" promptText="Min"/>
-                        <TextField fx:id="maxMutationsInput" prefWidth="95" promptText="Max"/>
+                        <TextField fx:id="minMutationsInput" text="0" prefWidth="95" promptText="Min"/>
+                        <TextField fx:id="maxMutationsInput" text="3" prefWidth="95" promptText="Max"/>
                     </HBox>
                 </VBox>
             </VBox>
