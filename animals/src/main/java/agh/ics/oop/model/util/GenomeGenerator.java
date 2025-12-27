@@ -1,6 +1,7 @@
 package agh.ics.oop.model.util;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GenomeGenerator {
@@ -15,7 +16,10 @@ public class GenomeGenerator {
         return newGenome;
     }
 
-    public static ArrayList<Integer> generateGenomeFromReproducing(ArrayList<Integer> genomX, ArrayList<Integer> genomY) {
+    public static List<Integer> generateGenomeFromReproducing(ArrayList<Integer> genomX, ArrayList<Integer> genomY) {
+        List<Integer> newGenome = List.copyOf(genomX);
+        newGenome.addAll(genomY);
+        return newGenome;
 
     }
 }

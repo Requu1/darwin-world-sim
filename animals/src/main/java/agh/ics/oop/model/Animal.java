@@ -60,7 +60,11 @@ public class Animal implements WorldElement {
         this.currGenomeIdx = (currGenomeIdx + 1) % genome.size();
     }
 
-    void updateEnergy(int amount) {
+    public int getEnergy() {
+        return this.energy;
+    }
+
+    public void updateEnergy(int amount) {
         this.energy += amount;
     }
 

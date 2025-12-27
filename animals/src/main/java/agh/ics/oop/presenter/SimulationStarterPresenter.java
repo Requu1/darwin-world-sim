@@ -4,7 +4,7 @@ import agh.ics.oop.Simulation;
 import agh.ics.oop.SimulationApp;
 import agh.ics.oop.World;
 import agh.ics.oop.model.RectangularMap;
-import agh.ics.oop.model.util.MapBuilder;
+import agh.ics.oop.model.util.RectangularMapBuilder;
 import agh.ics.oop.model.util.SimulationBuilder;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -42,14 +42,13 @@ public class SimulationStarterPresenter {
     @FXML
     public void onSimulationStartClicked() {
         SimulationApp simApp = new SimulationApp();
-        RectangularMap map = new MapBuilder()
+        RectangularMap map = new RectangularMapBuilder()
                 .withHeight(getIntFromTextField(mapHeightInput))
                 .withWidth(getIntFromTextField(mapWidthInput))
-                .withDailyEnergyLoss(getIntFromTextField(energyLossInput))
+                .withStartingPlantsCount(getIntFromTextField(startingPlantsCountInput))
                 .withMaxMutationsCount(getIntFromTextField(maxMutationsInput))
                 .withMinMutationsCount(getIntFromTextField(minMutationsInput))
                 .withEnergyRestoredByPlant(getIntFromTextField(plantEnergyRestoreInput))
-                .withPlantsGrowingDaily(getIntFromTextField(dailyGrowingPlantsInput))
                 .withUsedEnergyForReproduction(getIntFromTextField(reproductionEnergyInput))
                 .withMinimalEnergyForReproduction(getIntFromTextField(canReproduceEnergyForAnimalInput))
                 .create();
@@ -60,7 +59,6 @@ public class SimulationStarterPresenter {
         }
         Simulation simulation = new SimulationBuilder()
                 .withAnimalsPositions(World.generatePositions(getIntFromTextField(startingAnimalCountInput)))
-                .withPlantsPositions(World.generatePositions(getIntFromTextField(startingPlantsCountInput)))
                 .withMap(map)
                 .withGenomeLength(getIntFromTextField(genomeLengthInput))
                 .withStartingAnimalEnergy((getIntFromTextField(defaultEnergyInput)))

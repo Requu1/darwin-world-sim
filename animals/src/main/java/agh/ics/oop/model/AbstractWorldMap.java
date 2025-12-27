@@ -1,11 +1,9 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.World;
 import agh.ics.oop.model.util.MapVisualizer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class AbstractWorldMap implements WorldMap {
     protected final Map<Vector2d, Animal> animals = new HashMap<>();
@@ -15,6 +13,12 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     protected final Vector2d upperRightCorner;
     protected final Vector2d lowerLeftCorner;
+
+    protected final int energyRestoredByPlant;
+    protected final int minimalEnergyForReproduction;
+    protected final int usedEnergyForReproduction;
+    protected final int minMutationCount;
+    protected final int maxMutationCount;
 
     private final static String ADD_MESSAGE = "Animal has been added to:";
     private final static String MOVE_MESSAGE = "Animal has been moved to:";
@@ -35,10 +39,30 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
     }
 
-    public AbstractWorldMap(Vector2d lowerLeftCorner, Vector2d upperRightCorner) {
+    public AbstractWorldMap(Vector2d lowerLeftCorner, Vector2d upperRightCorner, int startingPlantsCount, int energyRestoredByPlant,
+                            int minimalEnergyForReproduction, int usedEnergyForReproduction, int minMutationCount, int maxMutationCount) {
         this.id = UUID.randomUUID();
         this.upperRightCorner = upperRightCorner;
         this.lowerLeftCorner = lowerLeftCorner;
+        this.energyRestoredByPlant = energyRestoredByPlant;
+        this.minimalEnergyForReproduction = minimalEnergyForReproduction;
+        this.usedEnergyForReproduction = usedEnergyForReproduction;
+        this.minMutationCount = minMutationCount;
+        this.maxMutationCount = maxMutationCount;
+        if (minMutationCount > maxMutationCount) {
+            throw new IllegalArgumentException("Minimal mutation count cannot be greater than maximal.");
+        }
+        try {
+            initializePlants(startingPlantsCount);
+        } catch (IncorrectPositionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initializePlants(int startingPlantsCount) throws IncorrectPositionException {
+        for (int i = 0; i < startingPlantsCount; i++) {
+            this.growPlant();
+        }
     }
 
     private void removeAnimalFromPos(Vector2d position) {
@@ -50,6 +74,12 @@ public abstract class AbstractWorldMap implements WorldMap {
         Vector2d preMovePosition = animal.getPosition();
         MapDirection preMoveDirection = animal.getFacingDirection();
         animal.move(this);
+
+        if (plants.get(animal.getPosition()) != null) {
+            updateEnergy(animal, energyRestoredByPlant);
+            this.plants.remove(animal.getPosition());
+        }
+
         removeAnimalFromPos(preMovePosition);
         this.animals.put(animal.getPosition(), animal);
         informListeners(String.format("%s ((%d,%d), %s) from: ((%d,%d), %s):",
@@ -60,13 +90,14 @@ public abstract class AbstractWorldMap implements WorldMap {
 
 
     @Override
-    public void updateEnergy(Animal animal) {
-
+    public void updateEnergy(Animal animal, int amount) {
+        animal.updateEnergy(amount);
     }
 
     @Override
-    public void growPlant(Plant plant) throws IncorrectPositionException {
-        this.plants.put(plant.getPosition(), plant);
+    public void growPlant() {
+        Vector2d plantPos = this.generatePlantPos();
+        this.plants.put(plantPos, new Plant(plantPos));
     }
 
     @Override
@@ -90,14 +121,11 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
     }
 
-    public void placePlant(Plant plant) {
-        this.plants.put(plant.getPosition(), plant);
-    }
-
-
     @Override
     public ArrayList<WorldElement> getElements() {
-        return new ArrayList<>(this.animals.values());
+        ArrayList<WorldElement> elements = new ArrayList<>(this.animals.values());
+        elements.addAll(new ArrayList<>(this.plants.values()));
+        return elements;
     }
 
     @Override
@@ -105,4 +133,23 @@ public abstract class AbstractWorldMap implements WorldMap {
         return this.id;
     }
 
+    public Vector2d generatePlantPos() {
+        Vector2d newPlantPos;
+        do {
+            newPlantPos = World.generateRandomSinglePos(this.upperRightCorner);
+        }
+        while (this.plants.get(newPlantPos) != null);
+
+        return newPlantPos;
+    }
+
+    @Override
+    public void removeAnimal(Animal animal) {
+        this.animals.remove(animal.getPosition());
+    }
+
+
+    public Map<Vector2d, Animal> getAnimalsWithPos() {
+        return this.animals;
+    }
 }

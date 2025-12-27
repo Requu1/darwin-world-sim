@@ -1,6 +1,7 @@
 package agh.ics.oop.model;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -49,7 +50,11 @@ public interface WorldMap extends MoveValidator {
 
     UUID getId();
 
-    void updateEnergy(Animal animal);
+    void updateEnergy(Animal animal, int amount);
 
-    void growPlant(Plant plant) throws IncorrectPositionException;
+    void growPlant();
+
+    void removeAnimal(Animal deadAnimal);
+
+    Map<Vector2d, Animal> getAnimals();
 }

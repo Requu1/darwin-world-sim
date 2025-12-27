@@ -9,10 +9,10 @@ import java.util.ArrayList;
 public class SimulationBuilder {
     private WorldMap map;
     private ArrayList<Vector2d> animalsPositions;
-    private ArrayList<Vector2d> plantsPositions;
     private int startingPlantCount;
     private int startingAnimalCount;
     private int startingAnimalEnergy;
+    private int plantsGrowingDaily;
     private int genomeLength;
 
     public SimulationBuilder withMap(WorldMap map) {
@@ -22,11 +22,6 @@ public class SimulationBuilder {
 
     public SimulationBuilder withAnimalsPositions(ArrayList<Vector2d> animalsPositions) {
         this.animalsPositions = animalsPositions;
-        return this;
-    }
-
-    public SimulationBuilder withPlantsPositions(ArrayList<Vector2d> plantsPositions) {
-        this.plantsPositions = plantsPositions;
         return this;
     }
 
@@ -51,15 +46,19 @@ public class SimulationBuilder {
         return this;
     }
 
+    public SimulationBuilder withPlantsGrowingDaily(int plantsGrowingDaily) {
+        this.plantsGrowingDaily = plantsGrowingDaily;
+        return this;
+    }
+
 
     public Simulation build() {
         return new Simulation(
                 animalsPositions,
-                plantsPositions,
                 map,
                 startingPlantCount,
-                startingAnimalCount,
                 startingAnimalEnergy,
+                plantsGrowingDaily,
                 genomeLength
         );
     }

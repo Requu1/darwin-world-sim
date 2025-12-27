@@ -15,4 +15,9 @@ public class World {
         }
         return positions;
     }
+
+    public static Vector2d generateRandomSinglePos(Vector2d upperRightCorner) {
+        Random random = new Random();
+        return new Vector2d(random.nextInt(upperRightCorner.getX() + 1), random.nextInt(upperRightCorner.getY()) + 1);
+    }
 }

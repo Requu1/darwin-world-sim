@@ -1,10 +1,15 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.*;
+import agh.ics.oop.model.Animal;
+import agh.ics.oop.model.IncorrectPositionException;
+import agh.ics.oop.model.Vector2d;
+import agh.ics.oop.model.WorldMap;
 import agh.ics.oop.model.util.AnimalBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static agh.ics.oop.model.util.GenomeGenerator.generateNewGenome;
 
@@ -12,34 +17,31 @@ public class Simulation implements Runnable {
     private static final int DAYS = 100;
 
     private final ArrayList<Animal> animals = new ArrayList<>();
-    private final ArrayList<Plant> plant = new ArrayList<>();
     private final WorldMap map;
-
-    private final int startingPlantCount;
-    private final int startingAnimalCount;
     private final int startingAnimalEnergy;
     private final int genomeLength;
+    private final int plantsGrowingDaily;
+    private final int dailyEnergyLoss;
 
 
     public Simulation(
             ArrayList<Vector2d> animalsPositions,
-            ArrayList<Vector2d> plantsPositions,
             WorldMap map,
-            int startingPlantCount,
-            int startingAnimalCount,
             int startingAnimalEnergy,
+            int plantsGrowingDaily,
+            int dailyEnergyLoss,
             int genomeLength
     ) {
         this.map = map;
-        this.startingPlantCount = startingPlantCount;
-        this.startingAnimalCount = startingAnimalCount;
         this.startingAnimalEnergy = startingAnimalEnergy;
+        this.plantsGrowingDaily = plantsGrowingDaily;
+        this.dailyEnergyLoss = dailyEnergyLoss;
         this.genomeLength = genomeLength;
-        initializeAnimalsAndPlants(animalsPositions, plantsPositions);
+        initializeAnimals(animalsPositions);
     }
 
 
-    private void initializeAnimalsAndPlants(List<Vector2d> animalsPositions, List<Vector2d> plantsPositions) {
+    private void initializeAnimals(List<Vector2d> animalsPositions) {
         for (Vector2d pos : animalsPositions) {
             try {
                 Animal animal = new AnimalBuilder()
@@ -53,14 +55,6 @@ public class Simulation implements Runnable {
                 e.printStackTrace();
             }
         }
-
-        for (Vector2d pos : plantsPositions) {
-            try {
-                map.growPlant(new Plant(pos));
-            } catch (IncorrectPositionException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
@@ -68,24 +62,45 @@ public class Simulation implements Runnable {
         int animalsCount = animals.size();
 
         if (animalsCount > 0) {
-            int currAnimalIndex = 0;
             for (int i = 0; i < DAYS; i++) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                ArrayList<Animal> deadAnimals = new ArrayList<>();
+                for (Animal currAnimal : this.animals) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    map.move(currAnimal);
+                    if(currAnimal.getEnergy()>)
+                        tryToReproduce(map.getAnimals(),currAnimal);
+                    }
+                    currAnimal.updateEnergy(-dailyEnergyLoss);
+
+                    if (currAnimal.getEnergy() <= 0) {
+                        animals.remove(currAnimal);
+                        deadAnimals.add(currAnimal);
+                    }
                 }
-                Animal currAnimal = this.animals.get(currAnimalIndex);
-                map.move(currAnimal);
-                map.updateEnergy(currAnimal);
-                currAnimalIndex = (currAnimalIndex + 1) % animalsCount;
+                for (int j = 0; j < plantsGrowingDaily; j++) {
+                    map.growPlant();
+                }
+
+                for (Animal deadAnimal : deadAnimals) {
+                    map.removeAnimal(deadAnimal);
+                }
+
             }
         } else {
             System.out.println("No animals to move");
         }
     }
 
-    public ArrayList<Animal> getAnimals() {
-        return this.animals;
+    private boolean tryToReproduce(Map<Vector2d,Animal> animals,Animal animal){
+        if()
     }
+
+    private void createNewAnimal(Animal X, Animal Y) {
+
+    }
+
 }
