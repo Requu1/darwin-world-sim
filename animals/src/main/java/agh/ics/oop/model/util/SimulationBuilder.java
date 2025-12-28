@@ -9,11 +9,15 @@ import java.util.ArrayList;
 public class SimulationBuilder {
     private WorldMap map;
     private ArrayList<Vector2d> animalsPositions;
-    private int startingPlantCount;
-    private int startingAnimalCount;
     private int startingAnimalEnergy;
     private int plantsGrowingDaily;
     private int genomeLength;
+    private int dailyEnergyLoss;
+
+    public SimulationBuilder withDailyEnergyLoss(int dailyEnergyLoss) {
+        this.dailyEnergyLoss = dailyEnergyLoss;
+        return this;
+    }
 
     public SimulationBuilder withMap(WorldMap map) {
         this.map = map;
@@ -25,16 +29,6 @@ public class SimulationBuilder {
         return this;
     }
 
-    public SimulationBuilder withStartPlantCount(int startingPlantCount) {
-        this.startingPlantCount = startingPlantCount;
-        return this;
-    }
-
-
-    public SimulationBuilder withStartingAnimalCount(int startingAnimalCount) {
-        this.startingAnimalCount = startingAnimalCount;
-        return this;
-    }
 
     public SimulationBuilder withStartingAnimalEnergy(int startingAnimalEnergy) {
         this.startingAnimalEnergy = startingAnimalEnergy;
@@ -56,9 +50,9 @@ public class SimulationBuilder {
         return new Simulation(
                 animalsPositions,
                 map,
-                startingPlantCount,
                 startingAnimalEnergy,
                 plantsGrowingDaily,
+                dailyEnergyLoss,
                 genomeLength
         );
     }

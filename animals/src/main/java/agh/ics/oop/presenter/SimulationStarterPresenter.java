@@ -58,8 +58,11 @@ public class SimulationStarterPresenter {
             e.printStackTrace();
         }
         Simulation simulation = new SimulationBuilder()
-                .withAnimalsPositions(World.generatePositions(getIntFromTextField(startingAnimalCountInput)))
+                .withAnimalsPositions(World.generatePositions(getIntFromTextField(startingAnimalCountInput),
+                        getIntFromTextField(mapWidthInput), getIntFromTextField(mapHeightInput)))
                 .withMap(map)
+                .withDailyEnergyLoss(getIntFromTextField(energyLossInput))
+                .withPlantsGrowingDaily(getIntFromTextField(dailyGrowingPlantsInput))
                 .withGenomeLength(getIntFromTextField(genomeLengthInput))
                 .withStartingAnimalEnergy((getIntFromTextField(defaultEnergyInput)))
                 .build();

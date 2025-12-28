@@ -7,7 +7,6 @@ import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -23,8 +22,6 @@ public class SimulationPresenter implements MapChangeListener {
     private static final int WIDTH_OFFSET = CELL_WIDTH + CELL_WIDTH / 2;
     private static final int HEIGHT_OFFSET = CELL_HEIGHT + CELL_HEIGHT / 2;
 
-    @FXML
-    private TextField inputTextField;
     @FXML
     private Label moveInfoLabel;
     @FXML

@@ -8,8 +8,6 @@ import agh.ics.oop.model.util.AnimalBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import static agh.ics.oop.model.util.GenomeGenerator.generateNewGenome;
 
@@ -63,44 +61,56 @@ public class Simulation implements Runnable {
 
         if (animalsCount > 0) {
             for (int i = 0; i < DAYS; i++) {
-                ArrayList<Animal> deadAnimals = new ArrayList<>();
-                for (Animal currAnimal : this.animals) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    map.move(currAnimal);
-                    if(currAnimal.getEnergy()>)
-                        tryToReproduce(map.getAnimals(),currAnimal);
-                    }
-                    currAnimal.updateEnergy(-dailyEnergyLoss);
-
-                    if (currAnimal.getEnergy() <= 0) {
-                        animals.remove(currAnimal);
-                        deadAnimals.add(currAnimal);
-                    }
-                }
-                for (int j = 0; j < plantsGrowingDaily; j++) {
-                    map.growPlant();
-                }
-
-                for (Animal deadAnimal : deadAnimals) {
-                    map.removeAnimal(deadAnimal);
-                }
-
+                map.clearBornAnimals();
+                checkForDeadAnimals();
+                growPlants();
+                moveAnimals();
+                updateBornAnimals(map.getBornAnimals());
+                updateDailyEnergyLoss();
             }
+
         } else {
             System.out.println("No animals to move");
         }
     }
 
-    private boolean tryToReproduce(Map<Vector2d,Animal> animals,Animal animal){
-        if()
+    private void updateBornAnimals(ArrayList<Animal> bornAnimals) {
+        this.animals.addAll(bornAnimals);
     }
 
-    private void createNewAnimal(Animal X, Animal Y) {
+    private void growPlants() {
+        for (int j = 0; j < plantsGrowingDaily; j++) {
+            map.growPlant();
+        }
+    }
 
+    private void updateDailyEnergyLoss() {
+        for (Animal animal : animals) {
+            animal.updateEnergy(-dailyEnergyLoss);
+        }
+    }
+
+    private void moveAnimals() {
+        for (Animal currAnimal : this.animals) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            map.move(currAnimal);
+        }
+    }
+
+
+    private void checkForDeadAnimals() {
+        for (Animal animal : this.animals) {
+            if (animal.getEnergy() < 0) {
+                this.animals.remove(animal);
+                map.removeAnimal(animal);
+            }
+        }
     }
 
 }
+
+

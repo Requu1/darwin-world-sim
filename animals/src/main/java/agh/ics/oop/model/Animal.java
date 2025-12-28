@@ -8,13 +8,17 @@ public class Animal implements WorldElement {
     private final static int DEFAULT_GENOME_LENGTH = 10;
     private final static Vector2d DEFAULT_POS = new Vector2d(2, 2);
     private final static int DEFAULT_ENERGY = 100;
-    private final static ArrayList<Integer> DEFAULT_GENOME = GenomeGenerator.generateNewGenome(10);
+    private final static ArrayList<Integer> DEFAULT_GENOME = GenomeGenerator.generateNewGenome(DEFAULT_GENOME_LENGTH);
 
     private MapDirection facingDirection;
     private Vector2d posVector;
     private int energy;
-    private ArrayList<Integer> genome;
+    private final ArrayList<Integer> genome;
     private int currGenomeIdx;
+
+    public Animal() {
+        this(DEFAULT_POS, DEFAULT_ENERGY, DEFAULT_GENOME);
+    }
 
     public Animal(Vector2d posVector, int energy, ArrayList<Integer> genome) {
         this.posVector = posVector;
@@ -52,16 +56,30 @@ public class Animal implements WorldElement {
         return this.posVector.equals(position);
     }
 
-    void move(MoveValidator validator) {
+    void move(Vector2d upperRightCorner) {
         for (int i = 0; i < genome.get(currGenomeIdx); i++) {
             this.facingDirection = MapDirection.next(facingDirection);
         }
-        this.posVector = posVector.add(this.facingDirection.toUnitVector());
+        Vector2d newPosVector = posVector.add(this.facingDirection.toUnitVector());
+
+        if (newPosVector.getX() < 0 || newPosVector.getX() > upperRightCorner.getX()) {
+            newPosVector = posVector.add(this.facingDirection.toUnitVector().opposite());
+        }
+
+        if (newPosVector.getY() < 0 || newPosVector.getY() > upperRightCorner.getY()) {
+            newPosVector = new Vector2d(newPosVector.getX(), newPosVector.getY() % upperRightCorner.getY());
+        }
+
+        this.posVector = newPosVector;
         this.currGenomeIdx = (currGenomeIdx + 1) % genome.size();
     }
 
     public int getEnergy() {
         return this.energy;
+    }
+
+    public ArrayList<Integer> getGenome() {
+        return this.genome;
     }
 
     public void updateEnergy(int amount) {
