@@ -1,18 +1,14 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.Animal;
-import agh.ics.oop.model.IncorrectPositionException;
-import agh.ics.oop.model.Vector2d;
-import agh.ics.oop.model.WorldMap;
+import agh.ics.oop.model.*;
 import agh.ics.oop.model.util.AnimalBuilder;
+import agh.ics.oop.model.util.GenomeGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static agh.ics.oop.model.util.GenomeGenerator.generateNewGenome;
-
 public class Simulation implements Runnable {
-    private static final int DAYS = 100;
+    private final static int SIMULATION_STEPS = 100;
 
     private final ArrayList<Animal> animals = new ArrayList<>();
     private final WorldMap map;
@@ -20,53 +16,66 @@ public class Simulation implements Runnable {
     private final int genomeLength;
     private final int plantsGrowingDaily;
     private final int dailyEnergyLoss;
+    private final double warmDistance;
+    private final SeasonManager season;
 
 
     public Simulation(
             ArrayList<Vector2d> animalsPositions,
             WorldMap map,
+            int seasonDuration,
+            double minTemperature,
             int startingAnimalEnergy,
             int plantsGrowingDaily,
             int dailyEnergyLoss,
-            int genomeLength
+            int genomeLength,
+            double warmDistance
     ) {
         this.map = map;
         this.startingAnimalEnergy = startingAnimalEnergy;
         this.plantsGrowingDaily = plantsGrowingDaily;
         this.dailyEnergyLoss = dailyEnergyLoss;
         this.genomeLength = genomeLength;
+        this.warmDistance = warmDistance;
+        this.season = new SeasonManager(seasonDuration, minTemperature);
         initializeAnimals(animalsPositions);
     }
 
 
     private void initializeAnimals(List<Vector2d> animalsPositions) {
         for (Vector2d pos : animalsPositions) {
-            try {
-                Animal animal = new AnimalBuilder()
-                        .withEnergy(startingAnimalEnergy)
-                        .withGenome(generateNewGenome(genomeLength))
-                        .withPosition(pos)
-                        .createAnimal();
-                map.place(animal);
-                this.animals.add(animal);
-            } catch (IncorrectPositionException e) {
-                e.printStackTrace();
-            }
+            Animal animal = new AnimalBuilder()
+                    .withEnergy(startingAnimalEnergy)
+                    .withGenome(new Genome(GenomeGenerator.generateNewGenomeSequence(genomeLength)))
+                    .withPosition(pos)
+                    .createAnimal();
+            map.place(animal);
+            this.animals.add(animal);
         }
     }
 
     @Override
     public void run() {
         int animalsCount = animals.size();
-
         if (animalsCount > 0) {
-            for (int i = 0; i < DAYS; i++) {
+            for (int step = 0; step < SIMULATION_STEPS; step++) {
                 map.clearBornAnimals();
-                checkForDeadAnimals();
+
+                this.animals.forEach(animal -> {
+                    checkIfAnimalIsDead(animal);
+                    updateAnimalTemperature(animal);
+                });
+
                 growPlants();
                 moveAnimals();
                 updateBornAnimals(map.getBornAnimals());
-                updateDailyEnergyLoss();
+
+                this.animals.forEach(animal -> {
+                    updateDailyEnergyLoss(animal);
+                    updateEnergyLossDueToLowTemperature(animal);
+                });
+
+                season.nextDay();
             }
 
         } else {
@@ -74,20 +83,30 @@ public class Simulation implements Runnable {
         }
     }
 
+    private void updateAnimalTemperature(Animal animal) {
+        if (season.isWinter()) {
+            animal.decreaseBodyTemperature(season.calcBodyTempChange(animal.getBodyTemperature()));
+        } else {
+            animal.increaseBodyTemperature(season.calcBodyTempChange(animal.getBodyTemperature()));
+        }
+    }
+
+
+    private void updateEnergyLossDueToLowTemperature(Animal animal) {
+        animal.subtractEnergy(animal.calculateEnergyLoss(season.getCurrentTemperature(), this.animals, warmDistance));
+    }
+
+
     private void updateBornAnimals(ArrayList<Animal> bornAnimals) {
         this.animals.addAll(bornAnimals);
     }
 
     private void growPlants() {
-        for (int j = 0; j < plantsGrowingDaily; j++) {
-            map.growPlant();
-        }
+        map.growPlants(plantsGrowingDaily);
     }
 
-    private void updateDailyEnergyLoss() {
-        for (Animal animal : animals) {
-            animal.updateEnergy(-dailyEnergyLoss);
-        }
+    private void updateDailyEnergyLoss(Animal animal) {
+        animal.subtractEnergy(dailyEnergyLoss);
     }
 
     private void moveAnimals() {
@@ -102,12 +121,10 @@ public class Simulation implements Runnable {
     }
 
 
-    private void checkForDeadAnimals() {
-        for (Animal animal : this.animals) {
-            if (animal.getEnergy() < 0) {
-                this.animals.remove(animal);
-                map.removeAnimal(animal);
-            }
+    private void checkIfAnimalIsDead(Animal animal) {
+        if (animal.getEnergy() < 0) {
+            this.animals.remove(animal);
+            map.removeAnimal(animal);
         }
     }
 

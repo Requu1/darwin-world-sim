@@ -11,6 +11,7 @@ public enum MapDirection {
     SOUTH_WEST(new Vector2d(-1, -1)),
     SOUTH_EAST(new Vector2d(1, -1));
 
+    private final static int DIRECTIONS_COUNT = 8;
     private final Vector2d unitVector;
 
     MapDirection(Vector2d unitVector) {
@@ -54,6 +55,14 @@ public enum MapDirection {
             case EAST -> NORTH_EAST;
             case NORTH_EAST -> NORTH;
         };
+    }
+
+    public static MapDirection opposite(MapDirection direction) {
+        MapDirection newDirection = direction;
+        for (int i = 0; i < DIRECTIONS_COUNT / 2; i++) {
+            newDirection = MapDirection.next(newDirection);
+        }
+        return newDirection;
     }
 
     public Vector2d toUnitVector() {

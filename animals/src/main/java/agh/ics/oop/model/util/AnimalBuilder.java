@@ -1,13 +1,12 @@
 package agh.ics.oop.model.util;
 
 import agh.ics.oop.model.Animal;
+import agh.ics.oop.model.Genome;
 import agh.ics.oop.model.Vector2d;
-
-import java.util.ArrayList;
 
 public class AnimalBuilder {
     private int energy;
-    private ArrayList<Integer> genome;
+    private Genome genome;
     private Vector2d posVector;
 
     public AnimalBuilder withEnergy(int energy) {
@@ -15,7 +14,7 @@ public class AnimalBuilder {
         return this;
     }
 
-    public AnimalBuilder withGenome(ArrayList<Integer> genome) {
+    public AnimalBuilder withGenome(Genome genome) {
         this.genome = genome;
         return this;
     }

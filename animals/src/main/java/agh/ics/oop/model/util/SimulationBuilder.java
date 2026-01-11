@@ -13,6 +13,19 @@ public class SimulationBuilder {
     private int plantsGrowingDaily;
     private int genomeLength;
     private int dailyEnergyLoss;
+    private int seasonDuration;
+    private double minTemperature;
+    private double warmDistance;
+
+    public SimulationBuilder withSeasonDuration(int seasonDuration) {
+        this.seasonDuration = seasonDuration;
+        return this;
+    }
+
+    public SimulationBuilder withMinTemperature(double minTemperature) {
+        this.minTemperature = minTemperature;
+        return this;
+    }
 
     public SimulationBuilder withDailyEnergyLoss(int dailyEnergyLoss) {
         this.dailyEnergyLoss = dailyEnergyLoss;
@@ -45,15 +58,23 @@ public class SimulationBuilder {
         return this;
     }
 
+    public SimulationBuilder withWarmDistance(double warmDistance) {
+        this.warmDistance = warmDistance;
+        return this;
+    }
 
     public Simulation build() {
         return new Simulation(
                 animalsPositions,
                 map,
+                seasonDuration,
+                minTemperature,
                 startingAnimalEnergy,
                 plantsGrowingDaily,
                 dailyEnergyLoss,
-                genomeLength
+                genomeLength,
+                warmDistance
+
         );
     }
 }

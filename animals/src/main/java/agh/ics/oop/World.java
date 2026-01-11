@@ -1,5 +1,6 @@
 package agh.ics.oop;
 
+import agh.ics.oop.model.Animal;
 import agh.ics.oop.model.Vector2d;
 
 import java.util.ArrayList;
@@ -16,31 +17,10 @@ public class World {
         return positions;
     }
 
-
-    public static Vector2d generatePlantPos(int mapWidth, int mapHeight) {
-        Random random = new Random();
-
-        if (random.nextInt(10) < 8) {
-            return generatePosInTheJungle(mapWidth, mapHeight);
-        } else {
-            return generatePosOutsideTheJungle(mapWidth, mapHeight);
-        }
-    }
-
-    private static Vector2d generatePosInTheJungle(int mapWidth, int mapHeight) {
-        Random random = new Random();
-        int upperBoundY = (int) Math.round(0.6 * mapHeight);
-        int lowerBoundY = (int) Math.round(0.4 * mapHeight);
-
-        return new Vector2d(random.nextInt(mapWidth), random.nextInt(upperBoundY - lowerBoundY + 1) + lowerBoundY);
-    }
-
-    private static Vector2d generatePosOutsideTheJungle(int mapWidth, int mapHeight) {
-        Random random = new Random();
-        int upperBoundY = (int) Math.round(0.6 * mapHeight);
-        int lowerBoundY = (int) Math.round(0.4 * mapHeight);
-
-        return new Vector2d(random.nextInt(mapWidth), (random.nextInt(lowerBoundY + upperBoundY) + upperBoundY) % mapHeight);
+    public static double calcDistance(Animal animal1, Animal animal2) {
+        double x = animal1.getPosition().getX() - animal2.getPosition().getX();
+        double y = animal1.getPosition().getY() - animal2.getPosition().getY();
+        return Math.sqrt(x * x + y * y);
     }
 
 }

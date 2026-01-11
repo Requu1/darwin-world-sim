@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 
-public interface WorldMap extends MoveValidator {
+public interface WorldMap {
 
-    void place(Animal animal) throws IncorrectPositionException;
+    void place(Animal animal);
 
     void move(Animal animal);
 
@@ -16,9 +16,7 @@ public interface WorldMap extends MoveValidator {
 
     UUID getId();
 
-    void updateEnergy(Animal animal, int amount);
-
-    void growPlant();
+    void growPlants(int plantsCount);
 
     void removeAnimal(Animal deadAnimal);
 

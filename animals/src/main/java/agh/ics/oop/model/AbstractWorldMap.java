@@ -1,8 +1,8 @@
 package agh.ics.oop.model;
 
-import agh.ics.oop.World;
 import agh.ics.oop.model.util.AnimalBuilder;
 import agh.ics.oop.model.util.GenomeGenerator;
+import agh.ics.oop.model.util.RandomPlantPositionGenerator;
 
 import java.util.*;
 
@@ -53,17 +53,11 @@ public abstract class AbstractWorldMap implements WorldMap {
         if (minMutationCount > maxMutationCount) {
             throw new IllegalArgumentException("Minimal mutation count cannot be greater than maximal.");
         }
-        try {
-            initializePlants(startingPlantsCount);
-        } catch (IncorrectPositionException e) {
-            e.printStackTrace();
-        }
+        initializePlants(startingPlantsCount);
     }
 
-    private void initializePlants(int startingPlantsCount) throws IncorrectPositionException {
-        for (int i = 0; i < startingPlantsCount; i++) {
-            this.growPlant();
-        }
+    private void initializePlants(int startingPlantsCount) {
+        this.growPlants(startingPlantsCount);
     }
 
     private void removeAnimalFromPos(Vector2d position) {
@@ -77,7 +71,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         animal.move(upperRightCorner);
 
         if (plants.get(animal.getPosition()) != null) {
-            updateEnergy(animal, energyRestoredByPlant);
+            animal.addEnergy(energyRestoredByPlant);
             this.plants.remove(animal.getPosition());
         }
 
@@ -95,21 +89,25 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     private void animalExistsOnTheNewPos(Animal animal) {
         List<Animal> animalsOnThePos = this.animals.get(animal.getPosition());
-        tryToReproduce(animal, animalsOnThePos);
+        animalsOnThePos = tryToReproduce(animal, animalsOnThePos);
         animalsOnThePos.add(animal);
         this.animals.put(animal.getPosition(), animalsOnThePos);
     }
 
-    private void tryToReproduce(Animal animal, List<Animal> animalsOnThePos) {
+    private List<Animal> tryToReproduce(Animal animal, List<Animal> animalsOnThePos) {
+        List<Animal> animalsOnThePosAfterReproduction = List.copyOf(animalsOnThePos);
         for (Animal animalAlreadyOnThePos : animalsOnThePos) {
             if (animalAlreadyOnThePos.getEnergy() >= minimalEnergyForReproduction) {
-                animalAlreadyOnThePos.updateEnergy(usedEnergyForReproduction);
-                animal.updateEnergy(usedEnergyForReproduction);
+                animalAlreadyOnThePos.subtractEnergy(usedEnergyForReproduction);
+                animal.subtractEnergy(usedEnergyForReproduction);
+
                 Animal bornAnimal = reproduce(animal, animalAlreadyOnThePos);
                 this.bornAnimals.add(bornAnimal);
-                animalsOnThePos.add(bornAnimal);
+                animalsOnThePosAfterReproduction.add(bornAnimal);
+                break;
             }
         }
+        return animalsOnThePosAfterReproduction;
     }
 
     @Override
@@ -126,31 +124,24 @@ public abstract class AbstractWorldMap implements WorldMap {
     private Animal reproduce(Animal animal1, Animal animal2) {
         return new AnimalBuilder()
                 .withEnergy(2 * usedEnergyForReproduction)
-                .withGenome(GenomeGenerator.generateGenomeFromReproducing(animal1, animal2, minMutationCount, maxMutationCount))
+                .withGenome(new Genome(GenomeGenerator.generateGenomeFromReproducing(animal1, animal2, minMutationCount, maxMutationCount)))
                 .withPosition(animal1.getPosition())
                 .createAnimal();
     }
 
 
     @Override
-    public void updateEnergy(Animal animal, int amount) {
-        animal.updateEnergy(amount);
-    }
-
-    @Override
-    public void growPlant() {
-        Vector2d plantPos = World.generatePlantPos(upperRightCorner.getX(), upperRightCorner.getY());
-        this.plants.put(plantPos, new Plant(plantPos));
-    }
-
-    @Override
-    public void place(Animal animal) throws IncorrectPositionException {
-        if (canMoveTo(animal.getPosition())) {
-            this.animals.put(animal.getPosition(), List.of(animal));
-            informListeners(String.format("%s ((%d,%d),%s)", ADD_MESSAGE, animal.getPosition().getX(), animal.getPosition().getY(), animal.getFacingDirection()));
-        } else {
-            throw new IncorrectPositionException(animal.getPosition());
+    public void growPlants(int plantsCount) {
+        RandomPlantPositionGenerator generator = new RandomPlantPositionGenerator(this.upperRightCorner.getX(), this.upperRightCorner.getY(), plantsCount);
+        for (Vector2d plantPosition : generator) {
+            this.plants.put(plantPosition, new Plant(plantPosition));
         }
+    }
+
+    @Override
+    public void place(Animal animal) {
+        this.animals.put(animal.getPosition(), List.of(animal));
+        informListeners(String.format("%s ((%d,%d),%s)", ADD_MESSAGE, animal.getPosition().getX(), animal.getPosition().getY(), animal.getFacingDirection()));
     }
 
     @Override
@@ -172,7 +163,16 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void removeAnimal(Animal animal) {
-        this.animals.remove(animal.getPosition());
+        if (animals.get(animal.getPosition()).size() == 1) {
+            this.animals.remove(animal.getPosition());
+        } else {
+            List<Animal> animalsAlreadyOnThePos = animals.get(animal.getPosition());
+            this.animals.remove(animal.getPosition());
+
+            animalsAlreadyOnThePos.remove(animal);
+            this.animals.put(animal.getPosition(), animalsAlreadyOnThePos);
+
+        }
     }
 
 }

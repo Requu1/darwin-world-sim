@@ -4,13 +4,14 @@ import agh.ics.oop.model.Animal;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class GenomeGenerator {
     private static final int DIRECTIONS_COUNT = 8;
     private static final Random random = new Random();
 
-    public static ArrayList<Integer> generateNewGenome(int genomeLength) {
+    public static List<Integer> generateNewGenomeSequence(int genomeLength) {
         ArrayList<Integer> newGenome = new ArrayList<>();
         for (int i = 0; i < genomeLength; i++) {
             newGenome.add(random.nextInt(DIRECTIONS_COUNT));
@@ -19,7 +20,7 @@ public class GenomeGenerator {
     }
 
     public static ArrayList<Integer> generateGenomeFromReproducing(Animal animal1, Animal animal2, int minMutations, int maxMutations) {
-        int genomeSize = animal1.getGenome().size();
+        int genomeSize = animal1.getGenome().getSequence().size();
 
         Animal stronger;
         Animal weaker;
@@ -39,11 +40,11 @@ public class GenomeGenerator {
         ArrayList<Integer> childGenome = new ArrayList<>();
 
         if (strongerOnLeft) {
-            childGenome.addAll(stronger.getGenome().subList(0, splitPoint));
-            childGenome.addAll(weaker.getGenome().subList(splitPoint, genomeSize));
+            childGenome.addAll(stronger.getGenome().getSequence().subList(0, splitPoint));
+            childGenome.addAll(weaker.getGenome().getSequence().subList(splitPoint, genomeSize));
         } else {
-            childGenome.addAll(weaker.getGenome().subList(0, genomeSize - splitPoint));
-            childGenome.addAll(stronger.getGenome().subList(genomeSize - splitPoint, genomeSize));
+            childGenome.addAll(weaker.getGenome().getSequence().subList(0, genomeSize - splitPoint));
+            childGenome.addAll(stronger.getGenome().getSequence().subList(genomeSize - splitPoint, genomeSize));
         }
 
         ArrayList<Integer> mutationsIndices = new ArrayList<>();
@@ -53,7 +54,6 @@ public class GenomeGenerator {
         Collections.shuffle(mutationsIndices);
 
         int mutationsCount = random.nextInt(maxMutations - minMutations + 1) + minMutations;
-
 
         for (int i = 0; i < mutationsCount && i < genomeSize; i++) {
             int indexToMutate = mutationsIndices.get(i);

@@ -38,6 +38,12 @@ public class SimulationStarterPresenter {
     private TextField maxMutationsInput;
     @FXML
     private TextField canReproduceEnergyForAnimalInput;
+    @FXML
+    private TextField minTemperatureInput;
+    @FXML
+    private TextField seasonDurationInput;
+    @FXML
+    private TextField warmDistanceInput;
 
     @FXML
     public void onSimulationStartClicked() {
@@ -61,10 +67,13 @@ public class SimulationStarterPresenter {
                 .withAnimalsPositions(World.generatePositions(getIntFromTextField(startingAnimalCountInput),
                         getIntFromTextField(mapWidthInput), getIntFromTextField(mapHeightInput)))
                 .withMap(map)
+                .withMinTemperature(getIntFromTextField(minTemperatureInput))
+                .withSeasonDuration(getIntFromTextField(seasonDurationInput))
                 .withDailyEnergyLoss(getIntFromTextField(energyLossInput))
                 .withPlantsGrowingDaily(getIntFromTextField(dailyGrowingPlantsInput))
                 .withGenomeLength(getIntFromTextField(genomeLengthInput))
                 .withStartingAnimalEnergy((getIntFromTextField(defaultEnergyInput)))
+                .withWarmDistance(getIntFromTextField(warmDistanceInput))
                 .build();
         Thread thread = new Thread(simulation);
         thread.start();
