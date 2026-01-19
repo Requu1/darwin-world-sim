@@ -60,11 +60,18 @@ public class Simulation implements Runnable {
         if (animalsCount > 0) {
             for (int step = 0; step < SIMULATION_STEPS; step++) {
                 map.clearBornAnimals();
-
-                this.animals.forEach(animal -> {
-                    checkIfAnimalIsDead(animal);
-                    updateAnimalTemperature(animal);
+                animals.removeIf(animal -> {
+                    if (animal.getEnergy() < 0) {
+                        map.removeAnimal(animal);
+                        return true;
+                    }
+                    return false;
                 });
+
+                if (animals.isEmpty()) {
+                    break;
+                }
+
 
                 growPlants();
                 moveAnimals();
@@ -75,6 +82,7 @@ public class Simulation implements Runnable {
                     updateEnergyLossDueToLowTemperature(animal);
                 });
 
+
                 season.nextDay();
             }
 
@@ -83,17 +91,11 @@ public class Simulation implements Runnable {
         }
     }
 
-    private void updateAnimalTemperature(Animal animal) {
-        if (season.isWinter()) {
-            animal.decreaseBodyTemperature(season.calcBodyTempChange(animal.getBodyTemperature()));
-        } else {
-            animal.increaseBodyTemperature(season.calcBodyTempChange(animal.getBodyTemperature()));
-        }
-    }
-
 
     private void updateEnergyLossDueToLowTemperature(Animal animal) {
-        animal.subtractEnergy(animal.calculateEnergyLoss(season.getCurrentTemperature(), this.animals, warmDistance));
+        if (season.isWinter()) {
+            animal.subtractEnergy(animal.calculateEnergyLoss(season.getCurrentTemperature(), this.animals, warmDistance));
+        }
     }
 
 
@@ -120,13 +122,6 @@ public class Simulation implements Runnable {
         }
     }
 
-
-    private void checkIfAnimalIsDead(Animal animal) {
-        if (animal.getEnergy() < 0) {
-            this.animals.remove(animal);
-            map.removeAnimal(animal);
-        }
-    }
 
 }
 

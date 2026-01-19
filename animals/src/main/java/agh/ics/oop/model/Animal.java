@@ -6,10 +6,8 @@ import java.util.List;
 
 public class Animal implements WorldElement {
     private final static Vector2d DEFAULT_POS = new Vector2d(2, 2);
+    private final static int MAX_ENERGY = 100;
     private final static int DEFAULT_ENERGY = 50;
-    private final static int DEFAULT_BODY_TEMPERATURE = 36;
-    private final static int MAX_BODY_TEMPERATURE = 37;
-    private final static int LOW_BODY_TEMPERATURE = 32;
     private final static double COLD_PENALTY = 1.5;
     private final static double ENERGY_LOSS_FACTOR = 0.5;
 
@@ -17,7 +15,6 @@ public class Animal implements WorldElement {
     private Vector2d posVector;
     private int energy;
     private final Genome genome;
-    private int bodyTemperature = DEFAULT_BODY_TEMPERATURE;
     private final AnimalStatistics stats;
 
     public Animal() {
@@ -56,6 +53,10 @@ public class Animal implements WorldElement {
         };
     }
 
+    public String getResourceName() {
+        return "animal.png";
+    }
+
     @Override
     public boolean isAt(Vector2d position) {
         return this.posVector.equals(position);
@@ -67,16 +68,18 @@ public class Animal implements WorldElement {
         }
         Vector2d newPosVector = posVector.add(this.facingDirection.toUnitVector());
 
-        if (newPosVector.getX() < 0 || newPosVector.getX() > upperRightCorner.getX()) {
-            newPosVector = posVector.add(this.facingDirection.toUnitVector().opposite());
+        if (newPosVector.getY() < 0 || newPosVector.getY() > upperRightCorner.getY()) {
+            newPosVector = posVector.add(this.facingDirection.opposite(this.facingDirection).toUnitVector());
             this.facingDirection = MapDirection.opposite(facingDirection);
         }
 
-        if (newPosVector.getY() < 0 || newPosVector.getY() > upperRightCorner.getY()) {
-            newPosVector = new Vector2d(newPosVector.getX(), (newPosVector.getY() + upperRightCorner.getY()) % upperRightCorner.getY());
+        int width = upperRightCorner.getX() + 1;
+        if (newPosVector.getX() < 0 || newPosVector.getX() > upperRightCorner.getX()) {
+            newPosVector = new Vector2d((((newPosVector.getX()) % width) + width) % width, newPosVector.getY());
         }
 
         this.posVector = newPosVector;
+        genome.updateCurrGenomeIdx();
     }
 
     public int getEnergy() {
@@ -88,43 +91,34 @@ public class Animal implements WorldElement {
     }
 
     public void addEnergy(int amount) {
-        this.energy += amount;
+        if (this.energy + amount > MAX_ENERGY) {
+            this.energy = MAX_ENERGY;
+        } else {
+            this.energy += amount;
+        }
     }
 
     public void subtractEnergy(int amount) {
         this.energy -= amount;
     }
 
-    public void increaseBodyTemperature(int amount) {
-        if (this.bodyTemperature + amount >= MAX_BODY_TEMPERATURE) {
-            this.bodyTemperature = MAX_BODY_TEMPERATURE;
-        }
-        this.bodyTemperature += amount;
-    }
-
-    public void decreaseBodyTemperature(int amount) {
-        this.bodyTemperature -= amount;
-    }
-
-    public int getBodyTemperature() {
-        return this.bodyTemperature;
-    }
-
 
     public int calculateEnergyLoss(double worldTemperature, List<Animal> animals, double warmDist) {
-        double currentLoss = 0;
-        if (this.bodyTemperature <= LOW_BODY_TEMPERATURE) {
-            currentLoss = ENERGY_LOSS_FACTOR * (LOW_BODY_TEMPERATURE - bodyTemperature);
-            long neighborsCount = animals.stream()
-                    .filter(animal -> animal != this && World.calcDistance(this, animal) <= warmDist)
-                    .count();
+        double currentLoss = ENERGY_LOSS_FACTOR;
+        long neighborsCount = animals.stream()
+                .filter(animal -> animal != this && World.calcDistance(this, animal) <= warmDist)
+                .count();
 
-            if (neighborsCount == 0) {
-                double noNeighboursPenalty = Math.abs(worldTemperature) * COLD_PENALTY;
-                currentLoss += noNeighboursPenalty;
-            }
+        if (neighborsCount == 0) {
+            double noNeighboursPenalty = Math.abs(worldTemperature) * COLD_PENALTY;
+            currentLoss += noNeighboursPenalty;
         }
+
         return (int) currentLoss;
+    }
+
+    public double getEnergyRatio() {
+        return (double) this.energy / MAX_ENERGY;
     }
 
 }

@@ -19,7 +19,11 @@ public class Genome {
     }
 
     public int getCurrGenomePart() {
-        return this.genomeSequence.get(currGenomeIdx++);
+        return this.genomeSequence.get(currGenomeIdx);
+    }
+
+    public void updateCurrGenomeIdx() {
+        currGenomeIdx = (currGenomeIdx + 1) % genomeSequence.size();
     }
 
     public List<Integer> getSequence() {

@@ -1,6 +1,7 @@
 package agh.ics.oop;
 
 import agh.ics.oop.model.AbstractWorldMap;
+import agh.ics.oop.model.FileMapDisplay;
 import agh.ics.oop.presenter.SimulationPresenter;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -34,6 +35,7 @@ public class SimulationApp extends Application {
         SimulationPresenter presenter = loader.getController();
         presenter.setWorldMap(map);
         map.addListener(presenter);
+        map.addListener(new FileMapDisplay());
         Stage stage = new Stage();
         configureStage(stage, viewRoot);
         stage.show();

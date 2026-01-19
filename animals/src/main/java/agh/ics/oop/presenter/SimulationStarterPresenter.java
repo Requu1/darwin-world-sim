@@ -67,10 +67,10 @@ public class SimulationStarterPresenter {
                 .withAnimalsPositions(World.generatePositions(getIntFromTextField(startingAnimalCountInput),
                         getIntFromTextField(mapWidthInput), getIntFromTextField(mapHeightInput)))
                 .withMap(map)
-                .withMinTemperature(getIntFromTextField(minTemperatureInput))
-                .withSeasonDuration(getIntFromTextField(seasonDurationInput))
                 .withDailyEnergyLoss(getIntFromTextField(energyLossInput))
+                .withMinTemperature(getIntFromTextField(minTemperatureInput))
                 .withPlantsGrowingDaily(getIntFromTextField(dailyGrowingPlantsInput))
+                .withSeasonDuration(getIntFromTextField(seasonDurationInput))
                 .withGenomeLength(getIntFromTextField(genomeLengthInput))
                 .withStartingAnimalEnergy((getIntFromTextField(defaultEnergyInput)))
                 .withWarmDistance(getIntFromTextField(warmDistanceInput))

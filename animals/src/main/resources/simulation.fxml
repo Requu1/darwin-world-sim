@@ -14,7 +14,7 @@
         <StackPane>
             <VBox alignment="CENTER" spacing="10">
                 <Canvas fx:id="mapGrid" height="550" width="550"/>
-                <Label fx:id="moveInfoLabel"/>
+                <Label fx:id="animalLifeLabel"></Label>
             </VBox>
         </StackPane>
     </center>

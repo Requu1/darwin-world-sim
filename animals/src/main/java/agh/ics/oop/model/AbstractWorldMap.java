@@ -92,10 +92,12 @@ public abstract class AbstractWorldMap implements WorldMap {
         animalsOnThePos = tryToReproduce(animal, animalsOnThePos);
         animalsOnThePos.add(animal);
         this.animals.put(animal.getPosition(), animalsOnThePos);
+        informListeners("Animal on position " + animal.getPosition() + " has been created.");
+
     }
 
     private List<Animal> tryToReproduce(Animal animal, List<Animal> animalsOnThePos) {
-        List<Animal> animalsOnThePosAfterReproduction = List.copyOf(animalsOnThePos);
+        List<Animal> animalsOnThePosAfterReproduction = new ArrayList<>(List.copyOf(animalsOnThePos));
         for (Animal animalAlreadyOnThePos : animalsOnThePos) {
             if (animalAlreadyOnThePos.getEnergy() >= minimalEnergyForReproduction) {
                 animalAlreadyOnThePos.subtractEnergy(usedEnergyForReproduction);
@@ -132,7 +134,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void growPlants(int plantsCount) {
-        RandomPlantPositionGenerator generator = new RandomPlantPositionGenerator(this.upperRightCorner.getX(), this.upperRightCorner.getY(), plantsCount);
+        RandomPlantPositionGenerator generator = new RandomPlantPositionGenerator(this.upperRightCorner.getX() + 1, this.upperRightCorner.getY() + 1, plantsCount, plants.keySet());
         for (Vector2d plantPosition : generator) {
             this.plants.put(plantPosition, new Plant(plantPosition));
         }
@@ -155,6 +157,32 @@ public abstract class AbstractWorldMap implements WorldMap {
         return elements;
     }
 
+    public List<List<Animal>> getPositionsWithAnimals() {
+        List<List<Animal>> animalsOnTheSamePos = new ArrayList<>();
+        for (List<Animal> animalList : this.animals.values()) {
+            animalsOnTheSamePos.add(animalList);
+        }
+        return animalsOnTheSamePos;
+    }
+
+    public List<Animal> animalsAtPos(Vector2d pos) {
+        return this.animals.get(pos);
+    }
+
+    public ArrayList<Animal> getAnimals() {
+        ArrayList<Animal> animalsArray = new ArrayList<>();
+        for (List<Animal> animalList : this.animals.values()) {
+            animalsArray.addAll(animalList);
+        }
+        return animalsArray;
+    }
+
+    public ArrayList<Plant> getPlants() {
+        ArrayList<Plant> plantsArray = new ArrayList<>();
+        plantsArray.addAll(plants.values());
+        return plantsArray;
+    }
+
     @Override
     public UUID getId() {
         return this.id;
@@ -163,6 +191,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void removeAnimal(Animal animal) {
+        //informListeners("Animal on position " + animal.getPosition() + " has died");
         if (animals.get(animal.getPosition()).size() == 1) {
             this.animals.remove(animal.getPosition());
         } else {
