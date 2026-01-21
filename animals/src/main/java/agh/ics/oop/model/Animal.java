@@ -1,7 +1,10 @@
 package agh.ics.oop.model;
 
 import agh.ics.oop.World;
+import agh.ics.oop.model.util.AnimalChangeListener;
+import agh.ics.oop.model.util.AnimalStatisticsData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Animal implements WorldElement {
@@ -17,6 +20,18 @@ public class Animal implements WorldElement {
     private final Genome genome;
     private final AnimalStatistics stats;
 
+    private final ArrayList<AnimalChangeListener> animalListeners = new ArrayList<>();
+
+    public void addListener(AnimalChangeListener listener) {
+        this.animalListeners.add(listener);
+    }
+
+    public void informListeners(AnimalStatisticsData data) {
+        for (AnimalChangeListener listener : this.animalListeners) {
+            listener.animalChanged(data, this);
+        }
+    }
+
     public Animal() {
         this(DEFAULT_POS, DEFAULT_ENERGY, new Genome());
     }
@@ -27,6 +42,10 @@ public class Animal implements WorldElement {
         this.genome = genome;
         this.facingDirection = MapDirection.NORTH;
         this.stats = new AnimalStatistics(this.genome, this.energy);
+    }
+
+    public AnimalStatistics getStats() {
+        return this.stats;
     }
 
 
@@ -63,13 +82,13 @@ public class Animal implements WorldElement {
     }
 
     void move(Vector2d upperRightCorner) {
-        for (int i = 0; i < genome.getCurrGenomePart(); i++) {
+        for (int i = 0; i < genome.getCurrGene(); i++) {
             this.facingDirection = MapDirection.next(facingDirection);
         }
         Vector2d newPosVector = posVector.add(this.facingDirection.toUnitVector());
 
         if (newPosVector.getY() < 0 || newPosVector.getY() > upperRightCorner.getY()) {
-            newPosVector = posVector.add(this.facingDirection.opposite(this.facingDirection).toUnitVector());
+            newPosVector = posVector.add(MapDirection.opposite(this.facingDirection).toUnitVector());
             this.facingDirection = MapDirection.opposite(facingDirection);
         }
 
@@ -79,7 +98,8 @@ public class Animal implements WorldElement {
         }
 
         this.posVector = newPosVector;
-        genome.updateCurrGenomeIdx();
+        genome.updateCurrGene();
+        this.informListeners(AnimalStatisticsData.UPDATE_ACTIVE_GENE);
     }
 
     public int getEnergy() {
@@ -96,10 +116,17 @@ public class Animal implements WorldElement {
         } else {
             this.energy += amount;
         }
+        informListeners(AnimalStatisticsData.UPDATE_ANIMAL_ENERGY);
     }
 
     public void subtractEnergy(int amount) {
-        this.energy -= amount;
+        if (this.energy - amount <= 0) {
+            this.energy = 0;
+            informListeners(AnimalStatisticsData.SET_DAY_OF_DEATH);
+        } else {
+            this.energy -= amount;
+        }
+        informListeners(AnimalStatisticsData.UPDATE_ANIMAL_ENERGY);
     }
 
 

@@ -10,8 +10,6 @@ public interface WorldMap {
 
     void move(Animal animal);
 
-    ArrayList<WorldElement> getElements();
-
     Boundary getCurrentBounds();
 
     UUID getId();
@@ -23,4 +21,6 @@ public interface WorldMap {
     ArrayList<Animal> getBornAnimals();
 
     void clearBornAnimals();
+
+    void reproduceAnimals();
 }

@@ -7,80 +7,93 @@ import agh.ics.oop.model.RectangularMap;
 import agh.ics.oop.model.util.RectangularMapBuilder;
 import agh.ics.oop.model.util.SimulationBuilder;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Spinner;
 
 import java.io.IOException;
 
 public class SimulationStarterPresenter {
     @FXML
-    private TextField mapWidthInput;
+    private Spinner<Integer> mapWidthInput;
     @FXML
-    private TextField mapHeightInput;
+    private Spinner<Integer> mapHeightInput;
     @FXML
-    private TextField startingPlantsCountInput;
+    private Spinner<Integer> startingPlantsCountInput;
     @FXML
-    private TextField plantEnergyRestoreInput;
+    private Spinner<Integer> plantEnergyRestoreInput;
     @FXML
-    private TextField dailyGrowingPlantsInput;
+    private Spinner<Integer> dailyGrowingPlantsInput;
     @FXML
-    private TextField startingAnimalCountInput;
+    private Spinner<Integer> startingAnimalCountInput;
     @FXML
-    private TextField defaultEnergyInput;
+    private Spinner<Integer> defaultEnergyInput;
     @FXML
-    private TextField energyLossInput;
+    private Spinner<Integer> energyLossInput;
     @FXML
-    private TextField reproductionEnergyInput;
+    private Spinner<Integer> reproductionEnergyInput;
     @FXML
-    private TextField genomeLengthInput;
+    private Spinner<Integer> genomeLengthInput;
     @FXML
-    private TextField minMutationsInput;
+    private Spinner<Integer> minMutationsInput;
     @FXML
-    private TextField maxMutationsInput;
+    private Spinner<Integer> maxMutationsInput;
     @FXML
-    private TextField canReproduceEnergyForAnimalInput;
+    private Spinner<Integer> canReproduceEnergyForAnimalInput;
     @FXML
-    private TextField minTemperatureInput;
+    private Spinner<Integer> minTemperatureInput;
     @FXML
-    private TextField seasonDurationInput;
+    private Spinner<Integer> seasonDurationInput;
     @FXML
-    private TextField warmDistanceInput;
+    private Spinner<Integer> warmDistanceInput;
 
     @FXML
     public void onSimulationStartClicked() {
+        try {
+            checkSimulationParameters();
+        } catch (Exception e) {
+            System.err.print(e);
+        }
+
         SimulationApp simApp = new SimulationApp();
         RectangularMap map = new RectangularMapBuilder()
-                .withHeight(getIntFromTextField(mapHeightInput))
-                .withWidth(getIntFromTextField(mapWidthInput))
-                .withStartingPlantsCount(getIntFromTextField(startingPlantsCountInput))
-                .withMaxMutationsCount(getIntFromTextField(maxMutationsInput))
-                .withMinMutationsCount(getIntFromTextField(minMutationsInput))
-                .withEnergyRestoredByPlant(getIntFromTextField(plantEnergyRestoreInput))
-                .withUsedEnergyForReproduction(getIntFromTextField(reproductionEnergyInput))
-                .withMinimalEnergyForReproduction(getIntFromTextField(canReproduceEnergyForAnimalInput))
+                .withHeight(mapHeightInput.getValue())
+                .withWidth(mapWidthInput.getValue())
+                .withStartingPlantsCount(startingPlantsCountInput.getValue())
+
+                //do symulacji
+                .withMaxMutationsCount(maxMutationsInput.getValue())
+                .withMinMutationsCount(minMutationsInput.getValue())
+                .withEnergyRestoredByPlant(plantEnergyRestoreInput.getValue())
+                .withUsedEnergyForReproduction(reproductionEnergyInput.getValue())
+                .withMinimalEnergyForReproduction(canReproduceEnergyForAnimalInput.getValue())
                 .create();
+
         try {
             simApp.launchSimulation(map);
         } catch (IOException e) {
             e.printStackTrace();
         }
         Simulation simulation = new SimulationBuilder()
-                .withAnimalsPositions(World.generatePositions(getIntFromTextField(startingAnimalCountInput),
-                        getIntFromTextField(mapWidthInput), getIntFromTextField(mapHeightInput)))
+                .withAnimalsPositions(World.generatePositions(
+                        startingAnimalCountInput.getValue(),
+                        mapWidthInput.getValue(),
+                        mapHeightInput.getValue()))
                 .withMap(map)
-                .withDailyEnergyLoss(getIntFromTextField(energyLossInput))
-                .withMinTemperature(getIntFromTextField(minTemperatureInput))
-                .withPlantsGrowingDaily(getIntFromTextField(dailyGrowingPlantsInput))
-                .withSeasonDuration(getIntFromTextField(seasonDurationInput))
-                .withGenomeLength(getIntFromTextField(genomeLengthInput))
-                .withStartingAnimalEnergy((getIntFromTextField(defaultEnergyInput)))
-                .withWarmDistance(getIntFromTextField(warmDistanceInput))
+                .withDailyEnergyLoss(energyLossInput.getValue())
+                .withMinTemperature(minTemperatureInput.getValue())
+                .withPlantsGrowingDaily(dailyGrowingPlantsInput.getValue())
+                .withSeasonDuration(seasonDurationInput.getValue())
+                .withGenomeLength(genomeLengthInput.getValue())
+                .withStartingAnimalEnergy(defaultEnergyInput.getValue())
+                .withWarmDistance(warmDistanceInput.getValue())
                 .build();
         Thread thread = new Thread(simulation);
         thread.start();
-
     }
 
-    private int getIntFromTextField(TextField text) {
-        return Integer.parseInt(text.getText());
+    private void checkSimulationParameters() {
+        if (minMutationsInput.getValue() > maxMutationsInput.getValue()) {
+            throw new IllegalArgumentException("Max mutations cannot be greater than minimal");
+        }
     }
+
 }

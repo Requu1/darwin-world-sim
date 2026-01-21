@@ -21,13 +21,27 @@ public class SimulationPresenter implements MapChangeListener {
     private static final int WIDTH_OFFSET = CELL_SIZE + CELL_SIZE / 2;
     private static final int HEIGHT_OFFSET = CELL_SIZE + CELL_SIZE / 2;
     @FXML
-    private Label animalLifeLabel;
+    private Label activeGeneLabel;
+    @FXML
+    private Label plantsEatenLabel;
+    @FXML
+    private Label energyLabel;
+    @FXML
+    private Label childrenCountLabel;
+    @FXML
+    private Label descendantCountLabel;
+    @FXML
+    private Label dayOfDeathLabel;
+    @FXML
+    private Label genomeSequenceLabel;
+    @FXML
+    private Label daysLivedLabel;
     @FXML
     private Canvas mapGrid;
 
+
     private AbstractWorldMap map;
     private Animal selectedAnimal = null;
-
 
     public void setWorldMap(AbstractWorldMap map) {
         this.map = map;
@@ -87,7 +101,6 @@ public class SimulationPresenter implements MapChangeListener {
                     (elementPosOnTheMap.getX() - map.getCurrentBounds().lowerLeftCorner().getX()) * CELL_SIZE + WIDTH_OFFSET
                     , (map.getCurrentBounds().upperRightCorner().getY() - elementPosOnTheMap.getY()) * CELL_SIZE + HEIGHT_OFFSET);
             drawAnimalsInCell(graphics, elementsPosOnTheGrid.getX(), elementsPosOnTheGrid.getY(), animalsOnTheSamePos);
-            //new WorldElementBox(animal).draw(graphics, elementsPosOnTheGrid.getX(), elementsPosOnTheGrid.getY(), ELEMENT_SIZE);}
         }
     }
 
@@ -99,7 +112,7 @@ public class SimulationPresenter implements MapChangeListener {
 
         for (int i = 0; i < animalsCount; i++) {
             double offsetX = (i % 2) * (CELL_SIZE / 2.0);
-            double offsetY = (i / 2) * (CELL_SIZE / 2.0);
+            double offsetY = ((double) i / 2) * (CELL_SIZE / 2.0);
 
             if (i >= 4) {
                 offsetX = Math.random() * (CELL_SIZE - animalSize);
@@ -164,7 +177,7 @@ public class SimulationPresenter implements MapChangeListener {
             }
 
             if (currentIndex == -1) {
-                selectedAnimal = animalsAtPos.get(0);
+                selectedAnimal = animalsAtPos.getFirst();
             } else {
                 selectedAnimal = animalsAtPos.get((currentIndex + 1) % animalsAtPos.size());
             }
@@ -176,14 +189,33 @@ public class SimulationPresenter implements MapChangeListener {
             drawMap();
             updateAnimalStats();
         });
+
     }
 
     private void updateAnimalStats() {
         if (selectedAnimal != null) {
-            animalLifeLabel.setText("Energia: " + selectedAnimal.getEnergy() +
-                    " | Geny: " + selectedAnimal.getGenome().getSequence() + " | Pozycja: " + selectedAnimal.getPosition());
+            activeGeneLabel.setText("Active gene: " + selectedAnimal.getStats().getActivatedPartOfGenome());
+            plantsEatenLabel.setText("Plants eaten: " + selectedAnimal.getStats().getPlantsEaten());
+            energyLabel.setText("Energy: " + selectedAnimal.getStats().getEnergy());
+            childrenCountLabel.setText("Children count: " + selectedAnimal.getStats().getChildrenCount());
+            descendantCountLabel.setText("Descendant count: " + selectedAnimal.getStats().getDescendantsCount());
+            genomeSequenceLabel.setText("Genome: " + selectedAnimal.getStats().getGenomeSequence());
+            daysLivedLabel.setText("Days lived: " + selectedAnimal.getStats().getDaysLived());
+
+            if (selectedAnimal.getStats().getDayOfDeath() == -1) {
+                dayOfDeathLabel.setText("Day of death: ");
+            } else {
+                dayOfDeathLabel.setText("Day of death: " + selectedAnimal.getStats().getDayOfDeath());
+            }
         } else {
-            animalLifeLabel.setText("Nie wybrano żadnego zwierzaka");
+            activeGeneLabel.setText("Active Gene: ");
+            plantsEatenLabel.setText("Plants eaten: ");
+            energyLabel.setText("Energy: ");
+            childrenCountLabel.setText("Children count: ");
+            descendantCountLabel.setText("Descendant count: ");
+            genomeSequenceLabel.setText("Genome: ");
+            daysLivedLabel.setText("Days lived: ");
+            dayOfDeathLabel.setText("Day of death: ");
         }
     }
 

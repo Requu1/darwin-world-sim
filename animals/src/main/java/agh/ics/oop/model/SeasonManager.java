@@ -13,7 +13,7 @@ public class SeasonManager {
     }
 
     public boolean isWinter() {
-        return (currentDay / seasonDuration) % 2 == 0;
+        return (currentDay / seasonDuration) % 2 != 0;
     }
 
     public void nextDay() {

@@ -19,7 +19,7 @@ public class RandomPlantPositionGenerator implements Iterable<Vector2d> {
         int lowerBoundY = (int) Math.round(0.4 * height);
         int upperBoundY = (int) Math.round(0.6 * height);
 
-        for (int i = 0; i <= width * height; i++) {
+        for (int i = 0; i < width * height; i++) {
             Vector2d pos = new Vector2d(i % width, i / width);
 
             if (!usedPlantPositions.contains(pos)) {

@@ -1,8 +1,6 @@
 package agh.ics.oop.model;
 
-import agh.ics.oop.model.util.AnimalBuilder;
-import agh.ics.oop.model.util.GenomeGenerator;
-import agh.ics.oop.model.util.RandomPlantPositionGenerator;
+import agh.ics.oop.model.util.*;
 
 import java.util.*;
 
@@ -24,18 +22,18 @@ public abstract class AbstractWorldMap implements WorldMap {
     private final static String ADD_MESSAGE = "Animal has been added to:";
     private final static String MOVE_MESSAGE = "Animal has been moved to:";
 
-    private final ArrayList<MapChangeListener> listeners = new ArrayList<>();
+    private final ArrayList<MapChangeListener> mapListeners = new ArrayList<>();
 
     public void addListener(MapChangeListener listener) {
-        this.listeners.add(listener);
+        this.mapListeners.add(listener);
     }
 
     public void removeListener(MapChangeListener listener) {
-        this.listeners.remove(listener);
+        this.mapListeners.remove(listener);
     }
 
     private void informListeners(String message) {
-        for (MapChangeListener listener : this.listeners) {
+        for (MapChangeListener listener : this.mapListeners) {
             listener.mapChanged(this, message);
         }
     }
@@ -60,26 +58,34 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.growPlants(startingPlantsCount);
     }
 
-    private void removeAnimalFromPos(Vector2d position) {
-        this.animals.remove(position);
+    private void removeAnimalFromPos(Animal animal) {
+        Vector2d position = animal.getPosition();
+        if (this.animals.get(position).size() == 1) {
+            this.animals.remove(position);
+        } else {
+            List<Animal> animalsOnThePos = animals.get(position);
+            animalsOnThePos.remove(animal);
+        }
     }
 
     @Override
     public void move(Animal animal) {
         Vector2d preMovePosition = animal.getPosition();
         MapDirection preMoveDirection = animal.getFacingDirection();
+        removeAnimalFromPos(animal);
         animal.move(upperRightCorner);
 
         if (plants.get(animal.getPosition()) != null) {
             animal.addEnergy(energyRestoredByPlant);
+            animal.informListeners(AnimalStatisticsData.ADD_PLANT_EATEN);
             this.plants.remove(animal.getPosition());
         }
 
-        removeAnimalFromPos(preMovePosition);
         if (animals.get(animal.getPosition()) == null) {
-            this.animals.put(animal.getPosition(), List.of(animal));
+            this.animals.put(animal.getPosition(), new ArrayList<>(List.of(animal)));
         } else {
-            animalExistsOnTheNewPos(animal);
+            List<Animal> animalsOnThePos = this.animals.get(animal.getPosition());
+            animalsOnThePos.add(animal);
         }
         informListeners(String.format("%s ((%d,%d), %s) from: ((%d,%d), %s):",
                 MOVE_MESSAGE, animal.getPosition().getX(), animal.getPosition().getY(), animal.getFacingDirection()
@@ -87,30 +93,24 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     }
 
-    private void animalExistsOnTheNewPos(Animal animal) {
-        List<Animal> animalsOnThePos = this.animals.get(animal.getPosition());
-        animalsOnThePos = tryToReproduce(animal, animalsOnThePos);
-        animalsOnThePos.add(animal);
-        this.animals.put(animal.getPosition(), animalsOnThePos);
-        informListeners("Animal on position " + animal.getPosition() + " has been created.");
-
-    }
-
-    private List<Animal> tryToReproduce(Animal animal, List<Animal> animalsOnThePos) {
-        List<Animal> animalsOnThePosAfterReproduction = new ArrayList<>(List.copyOf(animalsOnThePos));
-        for (Animal animalAlreadyOnThePos : animalsOnThePos) {
-            if (animalAlreadyOnThePos.getEnergy() >= minimalEnergyForReproduction) {
-                animalAlreadyOnThePos.subtractEnergy(usedEnergyForReproduction);
-                animal.subtractEnergy(usedEnergyForReproduction);
-
-                Animal bornAnimal = reproduce(animal, animalAlreadyOnThePos);
-                this.bornAnimals.add(bornAnimal);
-                animalsOnThePosAfterReproduction.add(bornAnimal);
-                break;
+    public void reproduceAnimals() {
+        for (Vector2d pos : this.animals.keySet()) {
+            if (animals.get(pos).size() < 2) {
+                continue;
+            }
+            List<Animal> potentialParents = animals.get(pos).stream()
+                    .filter(a -> a.getEnergy() >= minimalEnergyForReproduction)
+                    .sorted(Comparator.comparingInt(Animal::getEnergy).reversed())
+                    .limit(2)
+                    .toList();
+            if (potentialParents.size() == 2) {
+                Animal animal1 = potentialParents.get(0);
+                Animal animal2 = potentialParents.get(1);
+                reproduce(animal1, animal2);
             }
         }
-        return animalsOnThePosAfterReproduction;
     }
+
 
     @Override
     public void clearBornAnimals() {
@@ -123,12 +123,18 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
 
-    private Animal reproduce(Animal animal1, Animal animal2) {
-        return new AnimalBuilder()
+    private void reproduce(Animal animal1, Animal animal2) {
+        Animal newBornAnimal = new AnimalBuilder()
                 .withEnergy(2 * usedEnergyForReproduction)
                 .withGenome(new Genome(GenomeGenerator.generateGenomeFromReproducing(animal1, animal2, minMutationCount, maxMutationCount)))
                 .withPosition(animal1.getPosition())
                 .createAnimal();
+        List<Animal> animalsOnThePos = this.animals.get(newBornAnimal.getPosition());
+        animalsOnThePos.add(newBornAnimal);
+        this.bornAnimals.add(newBornAnimal);
+        informListeners("New animal has been reproduced");
+        animal1.informListeners(AnimalStatisticsData.ADD_CHILDREN_COUNT);
+        animal2.informListeners(AnimalStatisticsData.ADD_CHILDREN_COUNT);
     }
 
 
@@ -142,39 +148,21 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void place(Animal animal) {
-        this.animals.put(animal.getPosition(), List.of(animal));
+        this.animals.put(animal.getPosition(), new ArrayList<>(List.of(animal)));
         informListeners(String.format("%s ((%d,%d),%s)", ADD_MESSAGE, animal.getPosition().getX(), animal.getPosition().getY(), animal.getFacingDirection()));
     }
 
-    @Override
-    public ArrayList<WorldElement> getElements() {
-        ArrayList<WorldElement> elements = new ArrayList<>();
-        for (List<Animal> animalList : animals.values()) {
-            elements.addAll(animalList);
-        }
-        elements.addAll(plants.values());
-
-        return elements;
-    }
 
     public List<List<Animal>> getPositionsWithAnimals() {
         List<List<Animal>> animalsOnTheSamePos = new ArrayList<>();
         for (List<Animal> animalList : this.animals.values()) {
-            animalsOnTheSamePos.add(animalList);
+            animalsOnTheSamePos.add(new ArrayList<>(animalList));
         }
         return animalsOnTheSamePos;
     }
 
     public List<Animal> animalsAtPos(Vector2d pos) {
         return this.animals.get(pos);
-    }
-
-    public ArrayList<Animal> getAnimals() {
-        ArrayList<Animal> animalsArray = new ArrayList<>();
-        for (List<Animal> animalList : this.animals.values()) {
-            animalsArray.addAll(animalList);
-        }
-        return animalsArray;
     }
 
     public ArrayList<Plant> getPlants() {
@@ -191,15 +179,12 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void removeAnimal(Animal animal) {
-        //informListeners("Animal on position " + animal.getPosition() + " has died");
+        //informMapListeners("Animal on position " + animal.getPosition() + " has died");
         if (animals.get(animal.getPosition()).size() == 1) {
             this.animals.remove(animal.getPosition());
         } else {
             List<Animal> animalsAlreadyOnThePos = animals.get(animal.getPosition());
-            this.animals.remove(animal.getPosition());
-
             animalsAlreadyOnThePos.remove(animal);
-            this.animals.put(animal.getPosition(), animalsAlreadyOnThePos);
 
         }
     }

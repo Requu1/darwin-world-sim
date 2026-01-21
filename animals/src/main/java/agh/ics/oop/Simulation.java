@@ -7,6 +7,8 @@ import agh.ics.oop.model.util.GenomeGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+import static agh.ics.oop.model.util.SimulationSteps.*;
+
 public class Simulation implements Runnable {
     private final static int SIMULATION_STEPS = 100;
 
@@ -19,6 +21,7 @@ public class Simulation implements Runnable {
     private final double warmDistance;
     private final SeasonManager season;
 
+    private final SimulationFlow simulationStepper;
 
     public Simulation(
             ArrayList<Vector2d> animalsPositions,
@@ -39,8 +42,41 @@ public class Simulation implements Runnable {
         this.warmDistance = warmDistance;
         this.season = new SeasonManager(seasonDuration, minTemperature);
         initializeAnimals(animalsPositions);
+        simulationStepper = new SimulationFlow(this);
     }
 
+    public WorldMap getMap() {
+        return this.map;
+    }
+
+    public int getDailyEnergyLoss() {
+        return this.dailyEnergyLoss;
+    }
+
+    public List<Animal> getAnimals() {
+        return this.animals;
+    }
+
+
+    public SeasonManager getSeason() {
+        return season;
+    }
+
+    public int getStartingAnimalEnergy() {
+        return startingAnimalEnergy;
+    }
+
+    public int getGenomeLength() {
+        return genomeLength;
+    }
+
+    public int getPlantsGrowingDaily() {
+        return plantsGrowingDaily;
+    }
+
+    public double getWarmDistance() {
+        return warmDistance;
+    }
 
     private void initializeAnimals(List<Vector2d> animalsPositions) {
         for (Vector2d pos : animalsPositions) {
@@ -49,6 +85,7 @@ public class Simulation implements Runnable {
                     .withGenome(new Genome(GenomeGenerator.generateNewGenomeSequence(genomeLength)))
                     .withPosition(pos)
                     .createAnimal();
+            animal.addListener(new AnimalStatsUpdater());
             map.place(animal);
             this.animals.add(animal);
         }
@@ -59,31 +96,26 @@ public class Simulation implements Runnable {
         int animalsCount = animals.size();
         if (animalsCount > 0) {
             for (int step = 0; step < SIMULATION_STEPS; step++) {
-                map.clearBornAnimals();
-                animals.removeIf(animal -> {
-                    if (animal.getEnergy() < 0) {
-                        map.removeAnimal(animal);
-                        return true;
-                    }
-                    return false;
-                });
 
                 if (animals.isEmpty()) {
                     break;
                 }
 
+                simulationStepper.phaseNextSimulationStep(GROWING_PLANTS);
+                delayStep();
+                simulationStepper.phaseNextSimulationStep(MOVING_ANIMALS);
+                delayStep();
+                simulationStepper.phaseNextSimulationStep(ANIMALS_REPRODUCTION);
+                delayStep();
+                simulationStepper.phaseNextSimulationStep(UPDATE_DAILY_ENERGY_LOSS);
+                delayStep();
+                simulationStepper.phaseNextSimulationStep(UPDATE_WEATHER_CONDITIONS);
+                delayStep();
+                simulationStepper.phaseNextSimulationStep(CHECKING_ANIMALS_HEALTH);
+                delayStep();
+                simulationStepper.phaseNextSimulationStep(NEXT_DAY);
+                delayStep();
 
-                growPlants();
-                moveAnimals();
-                updateBornAnimals(map.getBornAnimals());
-
-                this.animals.forEach(animal -> {
-                    updateDailyEnergyLoss(animal);
-                    updateEnergyLossDueToLowTemperature(animal);
-                });
-
-
-                season.nextDay();
             }
 
         } else {
@@ -91,34 +123,11 @@ public class Simulation implements Runnable {
         }
     }
 
-
-    private void updateEnergyLossDueToLowTemperature(Animal animal) {
-        if (season.isWinter()) {
-            animal.subtractEnergy(animal.calculateEnergyLoss(season.getCurrentTemperature(), this.animals, warmDistance));
-        }
-    }
-
-
-    private void updateBornAnimals(ArrayList<Animal> bornAnimals) {
-        this.animals.addAll(bornAnimals);
-    }
-
-    private void growPlants() {
-        map.growPlants(plantsGrowingDaily);
-    }
-
-    private void updateDailyEnergyLoss(Animal animal) {
-        animal.subtractEnergy(dailyEnergyLoss);
-    }
-
-    private void moveAnimals() {
-        for (Animal currAnimal : this.animals) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            map.move(currAnimal);
+    private void delayStep() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

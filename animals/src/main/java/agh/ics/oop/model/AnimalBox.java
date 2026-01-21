@@ -5,11 +5,12 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class AnimalBox {
     private static final HashMap<String, Image> imageCache = new HashMap<>();
-    private Animal animal;
-    private Image image;
+    private final Animal animal;
+    private final Image image;
 
     public AnimalBox(Animal animal) {
         this.animal = animal;
@@ -18,7 +19,8 @@ public class AnimalBox {
         if (imageCache.get(resourceName) != null) {
             this.image = imageCache.get(resourceName);
         } else {
-            this.image = new Image(getClass().getResourceAsStream("/" + resourceName));
+            this.image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/" + resourceName)));
+            imageCache.put(resourceName, image);
         }
     }
 

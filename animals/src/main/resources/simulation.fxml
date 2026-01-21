@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.StackPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            minHeight="350.0" minWidth="650.0"
-            fx:controller="agh.ics.oop.presenter.SimulationPresenter"
->
+            minHeight="600.0" minWidth="900.0"
+            fx:controller="agh.ics.oop.presenter.SimulationPresenter">
+
+    <left>
+        <VBox alignment="CENTER" spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="20"/>
+            </padding>
+
+            <Canvas fx:id="mapGrid" height="550" width="550"/>
+        </VBox>
+    </left>
+
     <center>
-        <StackPane>
-            <VBox alignment="CENTER" spacing="10">
-                <Canvas fx:id="mapGrid" height="550" width="550"/>
-                <Label fx:id="animalLifeLabel"></Label>
+        <VBox alignment="TOP_CENTER" spacing="15">
+            <padding>
+                <Insets left="30" right="30"/>
+            </padding>
+
+            <Label text="Statystyki wybranego zwierzęcia" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+            <VBox alignment="CENTER_LEFT" spacing="5" maxWidth="200">
+                <Label fx:id="genomeSequenceLabel" text="Genome: "/>
+                <Label fx:id="activeGeneLabel" text="Active Gene: "/>
+                <Label fx:id="energyLabel" text="Energy: "/>
+                <Label fx:id="plantsEatenLabel" text="Plants eaten: "/>
+                <Label fx:id="childrenCountLabel" text="Children count: "/>
+                <Label fx:id="descendantCountLabel" text="Descendant count: "/>
+                <Label fx:id="daysLivedLabel" text="Days lived: "/>
+                <Label fx:id="dayOfDeathLabel" text="Day of death: "/>
             </VBox>
-        </StackPane>
+        </VBox>
     </center>
+
 </BorderPane>
