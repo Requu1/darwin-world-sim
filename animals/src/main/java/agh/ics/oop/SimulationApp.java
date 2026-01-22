@@ -1,6 +1,6 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.AbstractWorldMap;
+import agh.ics.oop.model.RectangularMap;
 import agh.ics.oop.model.FileMapDisplay;
 import agh.ics.oop.presenter.SimulationPresenter;
 import javafx.application.Application;
@@ -28,12 +28,13 @@ public class SimulationApp extends Application {
         });
     }
 
-    public void launchSimulation(AbstractWorldMap map) throws IOException {
+    public void launchSimulation(RectangularMap map, Simulation simulation) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getClassLoader().getResource("simulation.fxml"));
         BorderPane viewRoot = loader.load();
         SimulationPresenter presenter = loader.getController();
         presenter.setWorldMap(map);
+        presenter.setSimulation(simulation);
         map.addListener(presenter);
         map.addListener(new FileMapDisplay());
         Stage stage = new Stage();

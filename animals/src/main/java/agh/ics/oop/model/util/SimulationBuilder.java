@@ -1,13 +1,13 @@
 package agh.ics.oop.model.util;
 
 import agh.ics.oop.Simulation;
+import agh.ics.oop.model.RectangularMap;
 import agh.ics.oop.model.Vector2d;
-import agh.ics.oop.model.WorldMap;
 
 import java.util.ArrayList;
 
 public class SimulationBuilder {
-    private WorldMap map;
+    private RectangularMap map;
     private ArrayList<Vector2d> animalsPositions;
     private int startingAnimalEnergy;
     private int plantsGrowingDaily;
@@ -32,7 +32,7 @@ public class SimulationBuilder {
         return this;
     }
 
-    public SimulationBuilder withMap(WorldMap map) {
+    public SimulationBuilder withMap(RectangularMap map) {
         this.map = map;
         return this;
     }

@@ -1,11 +1,13 @@
 package agh.ics.oop.presenter;
 
+import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -39,15 +41,25 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private Canvas mapGrid;
 
+    @FXML
+    private Button pauseButton;
+    @FXML
+    private Label simulationStatusLabel;
 
-    private AbstractWorldMap map;
+
+    private RectangularMap map;
+    private Simulation simulation;
     private Animal selectedAnimal = null;
 
-    public void setWorldMap(AbstractWorldMap map) {
+    public void setWorldMap(RectangularMap map) {
         this.map = map;
         map.addListener(this);
         mapGrid.setOnMouseClicked(event -> handleCanvasClick(event.getX(), event.getY()));
         this.drawMap();
+    }
+
+    public void setSimulation(Simulation simulation) {
+        this.simulation = simulation;
     }
 
     private void setGridSize() {
@@ -219,9 +231,22 @@ public class SimulationPresenter implements MapChangeListener {
         }
     }
 
+    @FXML
+    private void onPauseResumeClicked() {
+        if (simulation != null) {
+            if (pauseButton.getText().equals("Pause")) {
+                simulationStatusLabel.setText("Simulation is stopped");
+                pauseButton.setText("Resume");
+            } else {
+                simulationStatusLabel.setText("Simulation is running");
+                pauseButton.setText("Pause");
+            }
+            simulation.togglePause();
+        }
+    }
 
     @Override
-    public void mapChanged(WorldMap map, String message) {
+    public void mapChanged(RectangularMap map, String message) {
         Platform.runLater(() -> {
             this.drawMap();
             updateAnimalStats();

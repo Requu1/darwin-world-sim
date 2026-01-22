@@ -15,8 +15,9 @@
             <padding>
                 <Insets top="10" right="10" bottom="10" left="20"/>
             </padding>
-
+            <Label fx:id="simulationStatusLabel" text="Simulation is running"/>
             <Canvas fx:id="mapGrid" height="550" width="550"/>
+            <Button fx:id="pauseButton" text="Pause" onAction="#onPauseResumeClicked"/>
         </VBox>
     </left>
 
@@ -26,7 +27,7 @@
                 <Insets left="30" right="30"/>
             </padding>
 
-            <Label text="Statystyki wybranego zwierzęcia" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <Label text="Statistics of the chosen animal" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
 
             <VBox alignment="CENTER_LEFT" spacing="5" maxWidth="200">
                 <Label fx:id="genomeSequenceLabel" text="Genome: "/>

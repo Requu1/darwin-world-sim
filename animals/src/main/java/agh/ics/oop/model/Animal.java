@@ -11,7 +11,7 @@ public class Animal implements WorldElement {
     private final static Vector2d DEFAULT_POS = new Vector2d(2, 2);
     private final static int MAX_ENERGY = 100;
     private final static int DEFAULT_ENERGY = 50;
-    private final static double COLD_PENALTY = 1.5;
+    private final static double COLD_PENALTY = 1.3;
     private final static double ENERGY_LOSS_FACTOR = 0.5;
 
     private MapDirection facingDirection;
@@ -19,6 +19,7 @@ public class Animal implements WorldElement {
     private int energy;
     private final Genome genome;
     private final AnimalStatistics stats;
+    private boolean alive = true;
 
     private final ArrayList<AnimalChangeListener> animalListeners = new ArrayList<>();
 
@@ -122,6 +123,7 @@ public class Animal implements WorldElement {
     public void subtractEnergy(int amount) {
         if (this.energy - amount <= 0) {
             this.energy = 0;
+            this.alive = false;
             informListeners(AnimalStatisticsData.SET_DAY_OF_DEATH);
         } else {
             this.energy -= amount;
@@ -147,5 +149,10 @@ public class Animal implements WorldElement {
     public double getEnergyRatio() {
         return (double) this.energy / MAX_ENERGY;
     }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
 
 }

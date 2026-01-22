@@ -6,6 +6,7 @@ import agh.ics.oop.model.util.GenomeGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static agh.ics.oop.model.util.SimulationSteps.*;
 
@@ -13,7 +14,7 @@ public class Simulation implements Runnable {
     private final static int SIMULATION_STEPS = 100;
 
     private final ArrayList<Animal> animals = new ArrayList<>();
-    private final WorldMap map;
+    private final RectangularMap map;
     private final int startingAnimalEnergy;
     private final int genomeLength;
     private final int plantsGrowingDaily;
@@ -21,11 +22,23 @@ public class Simulation implements Runnable {
     private final double warmDistance;
     private final SeasonManager season;
 
+    private boolean paused = false;
+    private final Object pauseLock = new Object();
+
     private final SimulationFlow simulationStepper;
+
+    public void togglePause() {
+        paused = !paused;
+        if (!paused) {
+            synchronized (pauseLock) {
+                pauseLock.notifyAll();
+            }
+        }
+    }
 
     public Simulation(
             ArrayList<Vector2d> animalsPositions,
-            WorldMap map,
+            RectangularMap map,
             int seasonDuration,
             double minTemperature,
             int startingAnimalEnergy,
@@ -45,7 +58,7 @@ public class Simulation implements Runnable {
         simulationStepper = new SimulationFlow(this);
     }
 
-    public WorldMap getMap() {
+    public RectangularMap getMap() {
         return this.map;
     }
 
@@ -53,8 +66,14 @@ public class Simulation implements Runnable {
         return this.dailyEnergyLoss;
     }
 
-    public List<Animal> getAnimals() {
+    public List<Animal> getAllAnimals() {
         return this.animals;
+    }
+
+    public List<Animal> getAliveAnimals() {
+        return this.animals.stream()
+                .filter(Animal::isAlive)
+                .collect(Collectors.toList());
     }
 
 
@@ -86,8 +105,8 @@ public class Simulation implements Runnable {
                     .withPosition(pos)
                     .createAnimal();
             animal.addListener(new AnimalStatsUpdater());
-            map.place(animal);
             this.animals.add(animal);
+            map.place(animal);
         }
     }
 
@@ -97,25 +116,26 @@ public class Simulation implements Runnable {
         if (animalsCount > 0) {
             for (int step = 0; step < SIMULATION_STEPS; step++) {
 
-                if (animals.isEmpty()) {
+                synchronized (pauseLock) {
+                    while (paused) {
+                        try {
+                            pauseLock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if (allAnimalsDead()) {
                     break;
                 }
-
                 simulationStepper.phaseNextSimulationStep(GROWING_PLANTS);
-                delayStep();
                 simulationStepper.phaseNextSimulationStep(MOVING_ANIMALS);
-                delayStep();
                 simulationStepper.phaseNextSimulationStep(ANIMALS_REPRODUCTION);
-                delayStep();
                 simulationStepper.phaseNextSimulationStep(UPDATE_DAILY_ENERGY_LOSS);
-                delayStep();
                 simulationStepper.phaseNextSimulationStep(UPDATE_WEATHER_CONDITIONS);
-                delayStep();
                 simulationStepper.phaseNextSimulationStep(CHECKING_ANIMALS_HEALTH);
-                delayStep();
                 simulationStepper.phaseNextSimulationStep(NEXT_DAY);
-                delayStep();
-
+                delay();
             }
 
         } else {
@@ -123,9 +143,18 @@ public class Simulation implements Runnable {
         }
     }
 
-    private void delayStep() {
+    private boolean allAnimalsDead() {
+        for (Animal animal : animals) {
+            if (animal.isAlive()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void delay() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -58,6 +58,9 @@ public class GenomeGenerator {
         for (int i = 0; i < mutationsCount && i < genomeSize; i++) {
             int indexToMutate = mutationsIndices.get(i);
             int newValue = random.nextInt(DIRECTIONS_COUNT);
+            while (newValue == childGenome.get(indexToMutate)) {
+                newValue = random.nextInt(DIRECTIONS_COUNT);
+            }
             childGenome.set(indexToMutate, newValue);
         }
 

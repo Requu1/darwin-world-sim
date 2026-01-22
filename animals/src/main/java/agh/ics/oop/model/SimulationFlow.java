@@ -27,27 +27,27 @@ public class SimulationFlow {
 
 
     private void removingAnimalsStep() {
-        simulation.getAnimals().removeIf(animal -> {
+        simulation.getAllAnimals().forEach(animal -> {
             if (animal.getEnergy() <= 0) {
-                simulation.getMap().removeAnimal(animal);
-                return true;
+                simulation.getMap().removeAnimalFromTheMap(animal);
             }
-            return false;
         });
     }
 
 
     private void animalsNextDayLived() {
         simulation.getSeason().nextDay();
-        simulation.getAnimals().forEach(a -> a.informListeners(AnimalStatisticsData.ADD_DAYS_LIVED));
+        simulation.getAliveAnimals().forEach(a ->
+                a.informListeners(AnimalStatisticsData.ADD_DAYS_LIVED)
+        );
     }
 
 
     private void updateEnergyLossDueToLowTemperature() {
         if (simulation.getSeason().isWinter()) {
-            simulation.getAnimals()
+            simulation.getAliveAnimals()
                     .forEach(a -> a.subtractEnergy(a
-                            .calculateEnergyLoss(simulation.getSeason().getCurrentTemperature(), simulation.getAnimals(), simulation.getWarmDistance())));
+                            .calculateEnergyLoss(simulation.getSeason().getCurrentTemperature(), simulation.getAliveAnimals(), simulation.getWarmDistance())));
         }
     }
 
@@ -57,7 +57,7 @@ public class SimulationFlow {
     }
 
     private void updateDailyEnergyLoss() {
-        simulation.getAnimals().forEach(a -> a.subtractEnergy(simulation.getDailyEnergyLoss()));
+        simulation.getAliveAnimals().forEach(a -> a.subtractEnergy(simulation.getDailyEnergyLoss()));
     }
 
 
@@ -68,12 +68,12 @@ public class SimulationFlow {
 
     private void updateBornAnimals(ArrayList<Animal> bornAnimals) {
         bornAnimals.forEach(a -> a.addListener(new AnimalStatsUpdater()));
-        simulation.getAnimals().addAll(bornAnimals);
+        simulation.getAllAnimals().addAll(bornAnimals);
         simulation.getMap().clearBornAnimals();
     }
 
     private void moveAnimals() {
-        for (Animal currAnimal : simulation.getAnimals()) {
+        for (Animal currAnimal : simulation.getAliveAnimals()) {
             simulation.getMap().move(currAnimal);
         }
     }

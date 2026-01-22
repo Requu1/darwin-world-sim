@@ -67,11 +67,6 @@ public class SimulationStarterPresenter {
                 .withMinimalEnergyForReproduction(canReproduceEnergyForAnimalInput.getValue())
                 .create();
 
-        try {
-            simApp.launchSimulation(map);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         Simulation simulation = new SimulationBuilder()
                 .withAnimalsPositions(World.generatePositions(
                         startingAnimalCountInput.getValue(),
@@ -86,6 +81,11 @@ public class SimulationStarterPresenter {
                 .withStartingAnimalEnergy(defaultEnergyInput.getValue())
                 .withWarmDistance(warmDistanceInput.getValue())
                 .build();
+        try {
+            simApp.launchSimulation(map, simulation);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Thread thread = new Thread(simulation);
         thread.start();
     }

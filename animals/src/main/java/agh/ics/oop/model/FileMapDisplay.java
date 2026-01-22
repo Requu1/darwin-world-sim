@@ -4,7 +4,7 @@ import java.io.FileWriter;
 
 public class FileMapDisplay implements MapChangeListener {
     @Override
-    public void mapChanged(WorldMap worldMap, String message) {
+    public void mapChanged(RectangularMap worldMap, String message) {
         String fileName = "map_" + worldMap.getId() + ".log";
         try (FileWriter writer = new FileWriter(fileName, true)) {
             writer.write("Ruch:" + message + "\n");
