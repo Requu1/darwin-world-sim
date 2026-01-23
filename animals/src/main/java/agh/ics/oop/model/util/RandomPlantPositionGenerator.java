@@ -23,7 +23,7 @@ public class RandomPlantPositionGenerator implements Iterable<Vector2d> {
             Vector2d pos = new Vector2d(i % width, i / width);
 
             if (!usedPlantPositions.contains(pos)) {
-                int y = pos.getY();
+                int y = pos.y();
                 if (y >= lowerBoundY && y <= upperBoundY) {
                     freeJungleIndices.add(i);
                 } else {

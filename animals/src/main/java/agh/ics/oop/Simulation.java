@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import static agh.ics.oop.model.util.SimulationSteps.*;
 
 public class Simulation implements Runnable {
-    private final static int SIMULATION_STEPS = 100;
 
     private final ArrayList<Animal> animals = new ArrayList<>();
     private final RectangularMap map;
@@ -21,6 +20,32 @@ public class Simulation implements Runnable {
     private final int dailyEnergyLoss;
     private final double warmDistance;
     private final SeasonManager season;
+
+    private final int energyRestoredByPlant;
+    private final int minimalEnergyForReproduction;
+    private final int usedEnergyForReproduction;
+    private final int minMutationCount;
+    private final int maxMutationCount;
+
+    public int getEnergyRestoredByPlant() {
+        return energyRestoredByPlant;
+    }
+
+    public int getMinimalEnergyForReproduction() {
+        return minimalEnergyForReproduction;
+    }
+
+    public int getUsedEnergyForReproduction() {
+        return usedEnergyForReproduction;
+    }
+
+    public int getMinMutationCount() {
+        return minMutationCount;
+    }
+
+    public int getMaxMutationCount() {
+        return maxMutationCount;
+    }
 
     private boolean paused = false;
     private final Object pauseLock = new Object();
@@ -58,7 +83,12 @@ public class Simulation implements Runnable {
             int plantsGrowingDaily,
             int dailyEnergyLoss,
             int genomeLength,
-            double warmDistance
+            double warmDistance,
+            int energyRestoredByPlant,
+            int minimalEnergyForReproduction,
+            int usedEnergyForReproduction,
+            int minMutationCount,
+            int maxMutationCount
     ) {
         this.map = map;
         this.startingAnimalEnergy = startingAnimalEnergy;
@@ -66,6 +96,11 @@ public class Simulation implements Runnable {
         this.dailyEnergyLoss = dailyEnergyLoss;
         this.genomeLength = genomeLength;
         this.warmDistance = warmDistance;
+        this.energyRestoredByPlant = energyRestoredByPlant;
+        this.minimalEnergyForReproduction = minimalEnergyForReproduction;
+        this.usedEnergyForReproduction = usedEnergyForReproduction;
+        this.minMutationCount = minMutationCount;
+        this.maxMutationCount = maxMutationCount;
         this.season = new SeasonManager(seasonDuration, minTemperature);
         initializeAnimals(animalsPositions);
         simulationStepper = new SimulationFlow(this);
@@ -100,14 +135,6 @@ public class Simulation implements Runnable {
         return season;
     }
 
-    public int getStartingAnimalEnergy() {
-        return startingAnimalEnergy;
-    }
-
-    public int getGenomeLength() {
-        return genomeLength;
-    }
-
     public int getPlantsGrowingDaily() {
         return plantsGrowingDaily;
     }
@@ -133,7 +160,7 @@ public class Simulation implements Runnable {
     public void run() {
         int animalsCount = animals.size();
         if (animalsCount > 0) {
-            for (int step = 0; step < SIMULATION_STEPS; step++) {
+            while (!allAnimalsDead()) {
 
                 synchronized (pauseLock) {
                     while (paused) {
@@ -144,9 +171,7 @@ public class Simulation implements Runnable {
                         }
                     }
                 }
-                if (allAnimalsDead()) {
-                    break;
-                }
+
                 simulationStepper.phaseNextSimulationStep(GROWING_PLANTS);
                 simulationStepper.phaseNextSimulationStep(MOVING_ANIMALS);
                 simulationStepper.phaseNextSimulationStep(ANIMALS_REPRODUCTION);
@@ -174,7 +199,7 @@ public class Simulation implements Runnable {
 
     private void delay() {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

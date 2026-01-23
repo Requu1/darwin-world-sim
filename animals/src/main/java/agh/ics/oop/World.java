@@ -18,8 +18,8 @@ public class World {
     }
 
     public static double calcDistance(Animal animal1, Animal animal2) {
-        double x = animal1.getPosition().getX() - animal2.getPosition().getX();
-        double y = animal1.getPosition().getY() - animal2.getPosition().getY();
+        double x = animal1.getPosition().x() - animal2.getPosition().x();
+        double y = animal1.getPosition().y() - animal2.getPosition().y();
         return Math.sqrt(x * x + y * y);
     }
 

@@ -10,7 +10,6 @@ public class AnimalStatistics {
     private int energy;
     private int plantsEaten = 0;
     private int childrenCount = 0;
-    private int descendantsCount = 0;
     private int daysLived = 0;
     private int dayOfDeath = -1;
 
@@ -27,7 +26,6 @@ public class AnimalStatistics {
             case SET_DAY_OF_DEATH -> dayOfDeath = daysLived;
             case ADD_PLANT_EATEN -> plantsEaten++;
             case UPDATE_ANIMAL_ENERGY -> energy = animal.getEnergy();
-            case ADD_DESCENDANT_COUNT -> descendantsCount++;
             case UPDATE_ACTIVE_GENE -> activeGene = animal.getGenome().getCurrGene();
 
         }
@@ -51,10 +49,6 @@ public class AnimalStatistics {
 
     public int getChildrenCount() {
         return childrenCount;
-    }
-
-    public int getDescendantsCount() {
-        return descendantsCount;
     }
 
     public int getDaysLived() {

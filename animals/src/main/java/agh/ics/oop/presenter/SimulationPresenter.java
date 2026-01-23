@@ -56,8 +56,6 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
     @FXML
     private Label childrenCountLabel;
     @FXML
-    private Label descendantCountLabel;
-    @FXML
     private Label dayOfDeathLabel;
     @FXML
     private Label genomeSequenceLabel;
@@ -90,8 +88,8 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
     private void setGridSize() {
         Boundary bounds = this.map.getCurrentBounds();
 
-        int mapWidth = bounds.upperRightCorner().getX() - bounds.lowerLeftCorner().getX() + 1;
-        int mapHeight = bounds.upperRightCorner().getY() - bounds.lowerLeftCorner().getY() + 1;
+        int mapWidth = bounds.upperRightCorner().x() - bounds.lowerLeftCorner().x() + 1;
+        int mapHeight = bounds.upperRightCorner().y() - bounds.lowerLeftCorner().y() + 1;
 
         mapGrid.setHeight(mapHeight * CELL_SIZE + CELL_SIZE);
         mapGrid.setWidth(mapWidth * CELL_SIZE + CELL_SIZE);
@@ -124,20 +122,20 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
         for (Plant plant : map.getPlants()) {
             elementPosOnTheMap = plant.getPosition();
             elementsPosOnTheGrid = new Vector2d(
-                    (elementPosOnTheMap.getX() - map.getCurrentBounds().lowerLeftCorner().getX()) * CELL_SIZE + WIDTH_OFFSET
-                    , (map.getCurrentBounds().upperRightCorner().getY() - elementPosOnTheMap.getY()) * CELL_SIZE + HEIGHT_OFFSET);
-            graphics.clearRect(elementsPosOnTheGrid.getX(), elementsPosOnTheGrid.getY(), (double) CELL_SIZE / 2 - 1, (double) CELL_SIZE / 2 - 1);
+                    (elementPosOnTheMap.x() - map.getCurrentBounds().lowerLeftCorner().x()) * CELL_SIZE + WIDTH_OFFSET
+                    , (map.getCurrentBounds().upperRightCorner().y() - elementPosOnTheMap.y()) * CELL_SIZE + HEIGHT_OFFSET);
+            graphics.clearRect(elementsPosOnTheGrid.x(), elementsPosOnTheGrid.y(), (double) CELL_SIZE / 2 - 1, (double) CELL_SIZE / 2 - 1);
             graphics.setFill(Color.GREEN);
-            graphics.fillRect(elementsPosOnTheGrid.getX() - ((double) CELL_SIZE / 2 - 1), elementsPosOnTheGrid.getY() - ((double) CELL_SIZE / 2 - 1),
-                    CELL_SIZE - 1, CELL_SIZE - 1);
+            graphics.fillRect(elementsPosOnTheGrid.x() - ((double) CELL_SIZE / 2 - 1), elementsPosOnTheGrid.y() - ((double) CELL_SIZE / 2 - 1),
+                    CELL_SIZE - 2, CELL_SIZE - 2);
         }
 
         for (List<Animal> animalsOnTheSamePos : map.getPositionsWithAnimals()) {
             elementPosOnTheMap = animalsOnTheSamePos.getFirst().getPosition();
             elementsPosOnTheGrid = new Vector2d(
-                    (elementPosOnTheMap.getX() - map.getCurrentBounds().lowerLeftCorner().getX()) * CELL_SIZE + WIDTH_OFFSET
-                    , (map.getCurrentBounds().upperRightCorner().getY() - elementPosOnTheMap.getY()) * CELL_SIZE + HEIGHT_OFFSET);
-            drawAnimalsInCell(graphics, elementsPosOnTheGrid.getX(), elementsPosOnTheGrid.getY(), animalsOnTheSamePos);
+                    (elementPosOnTheMap.x() - map.getCurrentBounds().lowerLeftCorner().x()) * CELL_SIZE + WIDTH_OFFSET
+                    , (map.getCurrentBounds().upperRightCorner().y() - elementPosOnTheMap.y()) * CELL_SIZE + HEIGHT_OFFSET);
+            drawAnimalsInCell(graphics, elementsPosOnTheGrid.x(), elementsPosOnTheGrid.y(), animalsOnTheSamePos);
         }
     }
 
@@ -172,12 +170,12 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
 
         graphics.fillText("y/x", WIDTH_OFFSET, HEIGHT_OFFSET);
 
-        int xCounter = map.getCurrentBounds().lowerLeftCorner().getX();
+        int xCounter = map.getCurrentBounds().lowerLeftCorner().x();
         for (int x = CELL_SIZE + WIDTH_OFFSET; x < mapGrid.getWidth() + 1; x += CELL_SIZE) {
             graphics.fillText(String.format("%d", xCounter++), x, WIDTH_OFFSET);
         }
 
-        int yCounter = map.getCurrentBounds().upperRightCorner().getY();
+        int yCounter = map.getCurrentBounds().upperRightCorner().y();
         for (int y = CELL_SIZE + HEIGHT_OFFSET; y < mapGrid.getHeight() + 1; y += CELL_SIZE) {
             graphics.fillText(String.format("%d", yCounter--), HEIGHT_OFFSET, y);
         }
@@ -200,8 +198,8 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
     private void handleCanvasClick(double mouseX, double mouseY) {
         Boundary bounds = map.getCurrentBounds();
 
-        int x = (int) Math.floor((mouseX - WIDTH_OFFSET + (double) CELL_SIZE / 2) / CELL_SIZE) + bounds.lowerLeftCorner().getX();
-        int y = bounds.upperRightCorner().getY() - (int) Math.floor((mouseY - HEIGHT_OFFSET + (double) CELL_SIZE / 2) / CELL_SIZE);
+        int x = (int) Math.floor((mouseX - WIDTH_OFFSET + (double) CELL_SIZE / 2) / CELL_SIZE) + bounds.lowerLeftCorner().x();
+        int y = bounds.upperRightCorner().y() - (int) Math.floor((mouseY - HEIGHT_OFFSET + (double) CELL_SIZE / 2) / CELL_SIZE);
 
         Vector2d clickedPos = new Vector2d(x, y);
         List<Animal> animalsAtPos = map.animalsAtPos(clickedPos);
@@ -233,7 +231,6 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
             plantsEatenLabel.setText("Plants eaten: " + selectedAnimal.getStats().getPlantsEaten());
             energyLabel.setText("Energy: " + selectedAnimal.getStats().getEnergy());
             childrenCountLabel.setText("Children count: " + selectedAnimal.getStats().getChildrenCount());
-            descendantCountLabel.setText("Descendant count: " + selectedAnimal.getStats().getDescendantsCount());
             genomeSequenceLabel.setText("Genome: " + selectedAnimal.getStats().getGenomeSequence());
             daysLivedLabel.setText("Days lived: " + selectedAnimal.getStats().getDaysLived());
 
@@ -247,7 +244,6 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
             plantsEatenLabel.setText("Plants eaten: ");
             energyLabel.setText("Energy: ");
             childrenCountLabel.setText("Children count: ");
-            descendantCountLabel.setText("Descendant count: ");
             genomeSequenceLabel.setText("Genome: ");
             daysLivedLabel.setText("Days lived: ");
             dayOfDeathLabel.setText("Day of death: ");

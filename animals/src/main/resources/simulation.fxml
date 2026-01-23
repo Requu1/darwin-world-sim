@@ -16,7 +16,7 @@
             <padding>
                 <Insets top="10" right="10" bottom="10" left="20"/>
             </padding>
-            <Label fx:id="simulationStatusLabel" text="Simulation is running"/>
+            <Label fx:id="simulationStatusLabel" text="Simulation is running" style="-fx-font-size: 15"/>
             <Canvas fx:id="mapGrid" height="550" width="550"/>
             <Button fx:id="pauseButton" text="Pause" onAction="#onPauseResumeClicked"/>
         </VBox>
@@ -30,14 +30,12 @@
 
             <Label text="Weather conditions" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
             <VBox>
-                <Label fx:id="simulationDayLabel" text="Simulation day: "></Label>
+                <Label fx:id="simulationDayLabel" text="Simulation day: "/>
                 <HBox alignment="CENTER_LEFT" spacing="5" maxWidth="200">
-                    <Label fx:id="worldTemperatureLabel" text="World temperature: "></Label>
+                    <Label fx:id="worldTemperatureLabel" text="World temperature: "/>
                     <ImageView fx:id="seasonImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true"
                                preserveRatio="true">
-                        <image>
-                            <Image url="summer.png"></Image>
-                        </image>
+                        <Image url="summer.png"/>
                     </ImageView>
                 </HBox>
             </VBox>
@@ -64,7 +62,6 @@
                 <Label fx:id="energyLabel" text="Energy: "/>
                 <Label fx:id="plantsEatenLabel" text="Plants eaten: "/>
                 <Label fx:id="childrenCountLabel" text="Children count: "/>
-                <Label fx:id="descendantCountLabel" text="Descendant count: "/>
                 <Label fx:id="daysLivedLabel" text="Days lived: "/>
                 <Label fx:id="dayOfDeathLabel" text="Day of death: "/>
             </VBox>

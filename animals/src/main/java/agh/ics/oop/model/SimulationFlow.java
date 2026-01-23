@@ -7,7 +7,8 @@ import agh.ics.oop.model.util.SimulationSteps;
 import java.util.ArrayList;
 
 public class SimulationFlow {
-    private final static double SUMMER_PLANT_BOOST = 1.5;
+    private final static double SUMMER_PLANT_COUNT_BOOST = 1.5;
+    private final static double SUMMER_PLANT_ENERGY_BOOST = 1.5;
 
     private final Simulation simulation;
 
@@ -58,7 +59,7 @@ public class SimulationFlow {
         if (simulation.getSeason().isWinter()) {
             simulation.getMap().growPlants(simulation.getPlantsGrowingDaily());
         } else {
-            simulation.getMap().growPlants((int) (simulation.getPlantsGrowingDaily() * SUMMER_PLANT_BOOST));
+            simulation.getMap().growPlants((int) (simulation.getPlantsGrowingDaily() * SUMMER_PLANT_COUNT_BOOST));
         }
     }
 
@@ -68,7 +69,9 @@ public class SimulationFlow {
 
 
     private void reproduceAnimalsOnTheMap() {
-        simulation.getMap().reproduceAnimals();
+        simulation.getMap()
+                .reproduceAnimals(simulation.getMinimalEnergyForReproduction(), simulation.getUsedEnergyForReproduction(),
+                        simulation.getMinMutationCount(), simulation.getMaxMutationCount());
         updateBornAnimals(simulation.getMap().getBornAnimals());
     }
 
@@ -79,8 +82,14 @@ public class SimulationFlow {
     }
 
     private void moveAnimals() {
+
+
         for (Animal currAnimal : simulation.getAliveAnimals()) {
-            simulation.getMap().move(currAnimal);
+            if (!simulation.getSeason().isWinter()) {
+                simulation.getMap().move(currAnimal, (int) (simulation.getEnergyRestoredByPlant() * SUMMER_PLANT_ENERGY_BOOST));
+            } else {
+                simulation.getMap().move(currAnimal, simulation.getEnergyRestoredByPlant());
+            }
         }
     }
 }

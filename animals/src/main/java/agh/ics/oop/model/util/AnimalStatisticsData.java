@@ -5,7 +5,6 @@ public enum AnimalStatisticsData {
     UPDATE_ANIMAL_ENERGY,
     ADD_PLANT_EATEN,
     ADD_CHILDREN_COUNT,
-    ADD_DESCENDANT_COUNT,
     ADD_DAYS_LIVED,
     SET_DAY_OF_DEATH
 }

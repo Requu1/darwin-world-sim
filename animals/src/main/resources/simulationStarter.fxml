@@ -39,7 +39,7 @@
                     <Label text="Energy restored after eating a plant" style="-fx-font-weight: bold;"/>
                     <Spinner fx:id="plantEnergyRestoreInput" editable="true" maxWidth="200">
                         <valueFactory>
-                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="30" initialValue="20"/>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="30" initialValue="15"/>
                         </valueFactory>
                     </Spinner>
                 </VBox>
@@ -48,7 +48,7 @@
                     <Label text="Plants growing each day" style="-fx-font-weight: bold;"/>
                     <Spinner fx:id="dailyGrowingPlantsInput" editable="true" maxWidth="200">
                         <valueFactory>
-                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="10" initialValue="5"/>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="15" initialValue="5"/>
                         </valueFactory>
                     </Spinner>
                 </VBox>

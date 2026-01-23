@@ -4,7 +4,6 @@ import agh.ics.oop.Simulation;
 import agh.ics.oop.SimulationApp;
 import agh.ics.oop.World;
 import agh.ics.oop.model.RectangularMap;
-import agh.ics.oop.model.util.RectangularMapBuilder;
 import agh.ics.oop.model.util.SimulationBuilder;
 import javafx.fxml.FXML;
 import javafx.scene.control.Spinner;
@@ -54,18 +53,7 @@ public class SimulationStarterPresenter {
         }
 
         SimulationApp simApp = new SimulationApp();
-        RectangularMap map = new RectangularMapBuilder()
-                .withHeight(mapHeightInput.getValue())
-                .withWidth(mapWidthInput.getValue())
-                .withStartingPlantsCount(startingPlantsCountInput.getValue())
-
-                //do symulacji
-                .withMaxMutationsCount(maxMutationsInput.getValue())
-                .withMinMutationsCount(minMutationsInput.getValue())
-                .withEnergyRestoredByPlant(plantEnergyRestoreInput.getValue())
-                .withUsedEnergyForReproduction(reproductionEnergyInput.getValue())
-                .withMinimalEnergyForReproduction(canReproduceEnergyForAnimalInput.getValue())
-                .create();
+        RectangularMap map = new RectangularMap(mapWidthInput.getValue(), mapHeightInput.getValue(), startingPlantsCountInput.getValue());
 
         Simulation simulation = new SimulationBuilder()
                 .withAnimalsPositions(World.generatePositions(
@@ -80,13 +68,18 @@ public class SimulationStarterPresenter {
                 .withGenomeLength(genomeLengthInput.getValue())
                 .withStartingAnimalEnergy(defaultEnergyInput.getValue())
                 .withWarmDistance(warmDistanceInput.getValue())
+                .withEnergyRestoredByPlant(plantEnergyRestoreInput.getValue())
+                .withMinimalEnergyForReproduction(canReproduceEnergyForAnimalInput.getValue())
+                .withUsedEnergyForReproduction(reproductionEnergyInput.getValue())
+                .withMaxMutationsCount(maxMutationsInput.getValue())
+                .withMinMutationsCount(minMutationsInput.getValue())
                 .build();
         try {
             simApp.launchSimulation(map, simulation);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Thread thread = new Thread(simulation);
+        Thread thread = Thread.ofVirtual().start(simulation);
         thread.start();
     }
 

@@ -16,6 +16,36 @@ public class SimulationBuilder {
     private int seasonDuration;
     private double minTemperature;
     private double warmDistance;
+    private int energyRestoredByPlant;
+    private int minimalEnergyForReproduction;
+    private int usedEnergyForReproduction;
+    private int minMutationCount;
+    private int maxMutationCount;
+
+    public SimulationBuilder withEnergyRestoredByPlant(int energyRestoredByPlant) {
+        this.energyRestoredByPlant = energyRestoredByPlant;
+        return this;
+    }
+
+    public SimulationBuilder withMinimalEnergyForReproduction(int minimalEnergyForReproduction) {
+        this.minimalEnergyForReproduction = minimalEnergyForReproduction;
+        return this;
+    }
+
+    public SimulationBuilder withUsedEnergyForReproduction(int usedEnergyForReproduction) {
+        this.usedEnergyForReproduction = usedEnergyForReproduction;
+        return this;
+    }
+
+    public SimulationBuilder withMinMutationsCount(int minMutationCount) {
+        this.minMutationCount = minMutationCount;
+        return this;
+    }
+
+    public SimulationBuilder withMaxMutationsCount(int maxMutationCount) {
+        this.maxMutationCount = maxMutationCount;
+        return this;
+    }
 
     public SimulationBuilder withSeasonDuration(int seasonDuration) {
         this.seasonDuration = seasonDuration;
@@ -73,7 +103,12 @@ public class SimulationBuilder {
                 plantsGrowingDaily,
                 dailyEnergyLoss,
                 genomeLength,
-                warmDistance
+                warmDistance,
+                energyRestoredByPlant,
+                minimalEnergyForReproduction,
+                usedEnergyForReproduction,
+                minMutationCount,
+                maxMutationCount
 
         );
     }

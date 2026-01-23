@@ -11,7 +11,7 @@ public class Animal implements WorldElement {
     private final static Vector2d DEFAULT_POS = new Vector2d(2, 2);
     private final static int MAX_ENERGY = 100;
     private final static int DEFAULT_ENERGY = 50;
-    private final static double COLD_PENALTY = 1.3;
+    private final static double COLD_PENALTY = 1.5;
     private final static double ENERGY_LOSS_FACTOR = 0.5;
 
     private MapDirection facingDirection;
@@ -88,14 +88,14 @@ public class Animal implements WorldElement {
         }
         Vector2d newPosVector = posVector.add(this.facingDirection.toUnitVector());
 
-        if (newPosVector.getY() < 0 || newPosVector.getY() > upperRightCorner.getY()) {
+        if (newPosVector.y() < 0 || newPosVector.y() > upperRightCorner.y()) {
             newPosVector = posVector.add(MapDirection.opposite(this.facingDirection).toUnitVector());
             this.facingDirection = MapDirection.opposite(facingDirection);
         }
 
-        int width = upperRightCorner.getX() + 1;
-        if (newPosVector.getX() < 0 || newPosVector.getX() > upperRightCorner.getX()) {
-            newPosVector = new Vector2d((((newPosVector.getX()) % width) + width) % width, newPosVector.getY());
+        int width = upperRightCorner.x() + 1;
+        if (newPosVector.x() < 0 || newPosVector.x() > upperRightCorner.x()) {
+            newPosVector = new Vector2d((((newPosVector.x()) % width) + width) % width, newPosVector.y());
         }
 
         this.posVector = newPosVector;

@@ -1,28 +1,10 @@
 package agh.ics.oop.model;
 
 
-import java.util.Objects;
-
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public class Vector2d {
-    final private int x;
-    final private int y;
-
-    public Vector2d(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-
-    public int getX() {
-        return this.x;
-    }
-
-    public int getY() {
-        return this.y;
-    }
+public record Vector2d(int x, int y) {
 
     @Override
     public String toString() {
@@ -63,8 +45,4 @@ public class Vector2d {
         return x == vector2d.x && y == vector2d.y;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
-    }
 }

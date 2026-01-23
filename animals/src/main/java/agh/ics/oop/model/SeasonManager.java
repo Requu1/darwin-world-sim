@@ -5,7 +5,7 @@ public class SeasonManager {
 
     private final int seasonDuration;
     private final double minTemperature;
-    private int currentDay = 0;
+    private int currentDay = 1;
 
     public SeasonManager(int seasonDuration, double minTemperature) {
         this.seasonDuration = seasonDuration;

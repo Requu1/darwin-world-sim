@@ -61,7 +61,7 @@ public class SimulationStats {
     public int getFreePositionsCount() {
         int positionsTakenByAnimals = simulation.getMap().getPositionsWithAnimals().size();
         Vector2d upperRightCorner = simulation.getMap().getCurrentBounds().upperRightCorner();
-        int allPositions = (upperRightCorner.getX() + 1) * (upperRightCorner.getY() + 1);
+        int allPositions = (upperRightCorner.x() + 1) * (upperRightCorner.y() + 1);
         return allPositions - positionsTakenByAnimals;
     }
 
