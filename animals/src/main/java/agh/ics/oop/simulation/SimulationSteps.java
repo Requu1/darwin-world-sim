@@ -1,0 +1,11 @@
+package agh.ics.oop.simulation;
+
+public enum SimulationSteps {
+    CHECKING_ANIMALS_HEALTH,
+    GROWING_PLANTS,
+    MOVING_ANIMALS,
+    ANIMALS_REPRODUCTION,
+    UPDATE_WEATHER_CONDITIONS,
+    UPDATE_DAILY_ENERGY_LOSS,
+    NEXT_DAY
+}

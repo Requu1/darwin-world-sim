@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="agh.ics.oop.presenter.SimulationStatisticsPresenter"
+            fx:controller="agh.ics.oop.presenters.SimulationStatisticsPresenter"
             minHeight="400.0" minWidth="700.0">
 
     <top>

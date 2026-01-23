@@ -5,7 +5,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="600.0" minWidth="850.0"
-            fx:controller="agh.ics.oop.presenter.SimulationStarterPresenter">
+            fx:controller="agh.ics.oop.presenters.SimulationStarterPresenter">
 
     <center>
         <HBox alignment="CENTER" spacing="100">
