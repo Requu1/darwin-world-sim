@@ -34,16 +34,28 @@ public class AnimalBox {
         gc.drawImage(image, x, y, size, size);
         gc.restore();
 
-        gc.setStroke(selectedAnimal ? Color.RED : Color.BLACK);
-        gc.setLineWidth(selectedAnimal ? 3 : 1);
-        gc.strokeOval(x, y, size, size);
+        if (selectedAnimal) {
+            gc.setStroke(Color.RED);
+            gc.setLineWidth(3);
+            gc.strokeOval(x, y, size, size);
+
+        } else {
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(1);
+            gc.strokeOval(x, y, size, size);
+        }
+
 
         gc.restore();
 
         double health = animal.getEnergyRatio();
         gc.setFill(Color.GRAY);
         gc.fillRect(x, y + size + 1, size, 3);
-        gc.setFill(health > 0.3 ? Color.GREEN : Color.RED);
+        if (health > 0.3) {
+            gc.setFill(Color.GREEN);
+        } else {
+            gc.setFill(Color.RED);
+        }
         gc.fillRect(x, y + size + 1, size * Math.min(health, 1.0), 3);
     }
 

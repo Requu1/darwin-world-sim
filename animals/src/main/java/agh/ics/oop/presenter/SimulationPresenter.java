@@ -21,7 +21,7 @@ import java.util.Objects;
 
 public class SimulationPresenter implements MapChangeListener, SimulationChangeListener {
     private static final int CELL_SIZE = 30;
-
+    private static final int DEFAULT_FONT_SIZE = 15;
     private static final int WIDTH_OFFSET = CELL_SIZE + CELL_SIZE / 2;
     private static final int HEIGHT_OFFSET = CELL_SIZE + CELL_SIZE / 2;
 
@@ -115,10 +115,28 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
     }
 
     private void drawElements(GraphicsContext graphics) {
-        this.configureFont(graphics, 15, Color.RED);
+        this.configureFont(graphics, Color.RED);
+
+        drawPlants(graphics);
+
+        drawAnimals(graphics);
+    }
+
+    private void drawAnimals(GraphicsContext graphics) {
         Vector2d elementPosOnTheMap;
         Vector2d elementsPosOnTheGrid;
+        for (List<Animal> animalsOnTheSamePos : map.getPositionsWithAnimals()) {
+            elementPosOnTheMap = animalsOnTheSamePos.getFirst().getPosition();
+            elementsPosOnTheGrid = new Vector2d(
+                    (elementPosOnTheMap.x() - map.getCurrentBounds().lowerLeftCorner().x()) * CELL_SIZE + WIDTH_OFFSET
+                    , (map.getCurrentBounds().upperRightCorner().y() - elementPosOnTheMap.y()) * CELL_SIZE + HEIGHT_OFFSET);
+            drawAnimalsInCell(graphics, elementsPosOnTheGrid.x(), elementsPosOnTheGrid.y(), animalsOnTheSamePos);
+        }
+    }
 
+    private void drawPlants(GraphicsContext graphics) {
+        Vector2d elementsPosOnTheGrid;
+        Vector2d elementPosOnTheMap;
         for (Plant plant : map.getPlants()) {
             elementPosOnTheMap = plant.getPosition();
             elementsPosOnTheGrid = new Vector2d(
@@ -128,14 +146,6 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
             graphics.setFill(Color.GREEN);
             graphics.fillRect(elementsPosOnTheGrid.x() - ((double) CELL_SIZE / 2 - 1), elementsPosOnTheGrid.y() - ((double) CELL_SIZE / 2 - 1),
                     CELL_SIZE - 2, CELL_SIZE - 2);
-        }
-
-        for (List<Animal> animalsOnTheSamePos : map.getPositionsWithAnimals()) {
-            elementPosOnTheMap = animalsOnTheSamePos.getFirst().getPosition();
-            elementsPosOnTheGrid = new Vector2d(
-                    (elementPosOnTheMap.x() - map.getCurrentBounds().lowerLeftCorner().x()) * CELL_SIZE + WIDTH_OFFSET
-                    , (map.getCurrentBounds().upperRightCorner().y() - elementPosOnTheMap.y()) * CELL_SIZE + HEIGHT_OFFSET);
-            drawAnimalsInCell(graphics, elementsPosOnTheGrid.x(), elementsPosOnTheGrid.y(), animalsOnTheSamePos);
         }
     }
 
@@ -163,7 +173,7 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
 
 
     private void drawAxes(GraphicsContext graphics) {
-        this.configureFont(graphics, 15, Color.BLACK);
+        this.configureFont(graphics, Color.BLACK);
 
         int WIDTH_OFFSET = CELL_SIZE / 2;
         int HEIGHT_OFFSET = CELL_SIZE / 2;
@@ -188,10 +198,10 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
         graphics.fillRect(0, 0, mapGrid.getWidth(), mapGrid.getHeight());
     }
 
-    private void configureFont(GraphicsContext graphics, int size, Color color) {
+    private void configureFont(GraphicsContext graphics, Color color) {
         graphics.setTextAlign(TextAlignment.CENTER);
         graphics.setTextBaseline(VPos.CENTER);
-        graphics.setFont(new Font("Arial", size));
+        graphics.setFont(new Font("Arial", DEFAULT_FONT_SIZE));
         graphics.setFill(color);
     }
 
@@ -252,17 +262,17 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
 
     private void updateSimulationStats() {
         if (simulation != null) {
-            freePositionsLabel.setText("Free positions: " + simulation.getSimulationStats().getFreePositionsCount());
-            plantsCountLabel.setText("Plants count: " + simulation.getSimulationStats().getPlantsCount());
-            averageEnergyLevelLabel.setText("Average energy level: " + simulation.getSimulationStats().getAvgEnergyLevel());
-            mostPopularGenomeLabel.setText("Most popular genome: " + simulation.getSimulationStats().getMostPopularGenome());
-            averageChildrenCountLabel.setText("Average children count: " + simulation.getSimulationStats().getAvgChildrenCount());
-            animalsCountLabel.setText("Animals count: " + simulation.getSimulationStats().getAnimalsCount());
+            freePositionsLabel.setText("Free positions: " + simulation.getLastSimulationStats().getFreePositionsCount());
+            plantsCountLabel.setText("Plants count: " + simulation.getLastSimulationStats().getPlantsCount());
+            averageEnergyLevelLabel.setText("Average energy level: " + simulation.getLastSimulationStats().getAvgEnergyLevel());
+            mostPopularGenomeLabel.setText("Most popular genome: " + simulation.getLastSimulationStats().getMostPopularGenome());
+            averageChildrenCountLabel.setText("Average children count: " + simulation.getLastSimulationStats().getAvgChildrenCount());
+            animalsCountLabel.setText("Animals count: " + simulation.getLastSimulationStats().getAnimalsCount());
 
-            if (simulation.getSimulationStats().getAvgAnimalsLifeSpan() == -1) {
+            if (simulation.getLastSimulationStats().getAvgAnimalsLifeSpan() == -1) {
                 averageLifeSpanLabel.setText("Average life span: ");
             } else {
-                averageLifeSpanLabel.setText("Average life span: " + simulation.getSimulationStats().getAvgAnimalsLifeSpan());
+                averageLifeSpanLabel.setText("Average life span: " + simulation.getLastSimulationStats().getAvgAnimalsLifeSpan());
             }
         }
     }

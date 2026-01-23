@@ -21,6 +21,12 @@ public class SimulationBuilder {
     private int usedEnergyForReproduction;
     private int minMutationCount;
     private int maxMutationCount;
+    private int plantsStartingCount;
+
+    public SimulationBuilder withPlantsStartingCount(int plantsStartingCount) {
+        this.plantsStartingCount = plantsStartingCount;
+        return this;
+    }
 
     public SimulationBuilder withEnergyRestoredByPlant(int energyRestoredByPlant) {
         this.energyRestoredByPlant = energyRestoredByPlant;
@@ -108,7 +114,8 @@ public class SimulationBuilder {
                 minimalEnergyForReproduction,
                 usedEnergyForReproduction,
                 minMutationCount,
-                maxMutationCount
+                maxMutationCount,
+                plantsStartingCount
 
         );
     }

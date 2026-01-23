@@ -27,6 +27,8 @@ public class Simulation implements Runnable {
     private final int minMutationCount;
     private final int maxMutationCount;
 
+    private final List<SimulationStats> statsHistory = new ArrayList<>();
+
     public int getEnergyRestoredByPlant() {
         return energyRestoredByPlant;
     }
@@ -51,7 +53,6 @@ public class Simulation implements Runnable {
     private final Object pauseLock = new Object();
 
     private final SimulationFlow simulationStepper;
-    private final SimulationStats simulationStats;
 
     private final List<SimulationChangeListener> listeners = new ArrayList<>();
 
@@ -88,7 +89,8 @@ public class Simulation implements Runnable {
             int minimalEnergyForReproduction,
             int usedEnergyForReproduction,
             int minMutationCount,
-            int maxMutationCount
+            int maxMutationCount,
+            int plantsStartingCount
     ) {
         this.map = map;
         this.startingAnimalEnergy = startingAnimalEnergy;
@@ -103,13 +105,18 @@ public class Simulation implements Runnable {
         this.maxMutationCount = maxMutationCount;
         this.season = new SeasonManager(seasonDuration, minTemperature);
         initializeAnimals(animalsPositions);
+        map.growPlants(plantsStartingCount);
         simulationStepper = new SimulationFlow(this);
-        this.simulationStats = new SimulationStats(this);
+        updateStats();
     }
 
 
-    public SimulationStats getSimulationStats() {
-        return this.simulationStats;
+    public SimulationStats getLastSimulationStats() {
+        if (statsHistory.isEmpty()) {
+            return null;
+        } else {
+            return statsHistory.get(statsHistory.size() - 1);
+        }
     }
 
     public RectangularMap getMap() {
@@ -178,14 +185,27 @@ public class Simulation implements Runnable {
                 simulationStepper.phaseNextSimulationStep(UPDATE_DAILY_ENERGY_LOSS);
                 simulationStepper.phaseNextSimulationStep(UPDATE_WEATHER_CONDITIONS);
                 simulationStepper.phaseNextSimulationStep(CHECKING_ANIMALS_HEALTH);
-                simulationStepper.phaseNextSimulationStep(NEXT_DAY);
+                if (allAnimalsDead()) {
+                    break;
+                }
+                updateStats();
                 informListeners();
                 delay();
+                simulationStepper.phaseNextSimulationStep(NEXT_DAY);
             }
 
         } else {
             System.out.println("No animals to move");
         }
+    }
+
+    private void updateStats() {
+        SimulationStats newStats = new SimulationStats(this);
+        statsHistory.add(newStats);
+    }
+
+    public List<SimulationStats> getStatsHistory() {
+        return List.copyOf(this.statsHistory);
     }
 
     private boolean allAnimalsDead() {

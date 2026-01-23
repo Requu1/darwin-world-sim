@@ -33,15 +33,11 @@ public class RectangularMap {
         }
     }
 
-    public RectangularMap(int width, int height, int startingPlantsCount) {
+    public RectangularMap(int width, int height) {
         this.id = UUID.randomUUID();
         this.upperRightCorner = new Vector2d(width - 1, height - 1);
-        initializePlants(startingPlantsCount);
     }
 
-    private void initializePlants(int startingPlantsCount) {
-        this.growPlants(startingPlantsCount);
-    }
 
     private void removeAnimalFromPreviousPos(Animal animal) {
         Vector2d position = animal.getPosition();
@@ -138,6 +134,7 @@ public class RectangularMap {
                 this.plants.put(plantPosition, new Plant(plantPosition));
             }
         }
+        informListeners("New plants have been created");
     }
 
     public void place(Animal animal) {

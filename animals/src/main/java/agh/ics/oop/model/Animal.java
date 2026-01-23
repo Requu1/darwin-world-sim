@@ -131,6 +131,10 @@ public class Animal implements WorldElement {
         informListeners(AnimalStatisticsData.UPDATE_ANIMAL_ENERGY);
     }
 
+    private void changeGenomeSequence() {
+        informListeners(AnimalStatisticsData.UPDATE_GENOME_SEQUENCE);
+    }
+
 
     public int calculateEnergyLoss(double worldTemperature, List<Animal> animals, double warmDist) {
         double currentLoss = ENERGY_LOSS_FACTOR;
@@ -139,6 +143,7 @@ public class Animal implements WorldElement {
                 .count();
 
         if (neighborsCount == 0) {
+            changeGenomeSequence();
             double noNeighboursPenalty = Math.abs(worldTemperature) * COLD_PENALTY;
             currentLoss += noNeighboursPenalty;
         }
@@ -152,6 +157,10 @@ public class Animal implements WorldElement {
 
     public boolean isAlive() {
         return alive;
+    }
+
+    public void nextDayLived() {
+        informListeners(AnimalStatisticsData.ADD_DAYS_LIVED);
     }
 
 

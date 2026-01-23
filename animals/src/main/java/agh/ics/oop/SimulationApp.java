@@ -2,6 +2,7 @@ package agh.ics.oop;
 
 import agh.ics.oop.model.RectangularMap;
 import agh.ics.oop.presenter.SimulationPresenter;
+import agh.ics.oop.presenter.SimulationStatisticsPresenter;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -39,13 +40,29 @@ public class SimulationApp extends Application {
         //map.addListener(new FileMapDisplay());
         Stage stage = new Stage();
         configureStage(stage, viewRoot);
+        stage.setTitle("Simulation app");
         stage.show();
+
+        launchSimulationStatistics(simulation);
+    }
+
+    private void launchSimulationStatistics(Simulation simulation) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getClassLoader().getResource("simulationStatistics.fxml"));
+        BorderPane viewRoot = loader.load();
+        SimulationStatisticsPresenter presenter = loader.getController();
+        presenter.initializeChart(simulation);
+        simulation.addListener(presenter);
+        Stage stage = new Stage();
+        configureStage(stage, viewRoot);
+        stage.setTitle("Simulation stats");
+        stage.show();
+
     }
 
     private void configureStage(Stage primaryStage, BorderPane viewRoot) {
         var scene = new Scene(viewRoot);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Simulation app");
         primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
         primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
     }

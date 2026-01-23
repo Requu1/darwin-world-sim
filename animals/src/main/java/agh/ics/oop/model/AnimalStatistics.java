@@ -21,6 +21,7 @@ public class AnimalStatistics {
 
     public void updateStats(AnimalStatisticsData data, Animal animal) {
         switch (data) {
+            case UPDATE_GENOME_SEQUENCE -> animal.getGenome().
             case ADD_DAYS_LIVED -> daysLived++;
             case ADD_CHILDREN_COUNT -> childrenCount++;
             case SET_DAY_OF_DEATH -> dayOfDeath = daysLived;

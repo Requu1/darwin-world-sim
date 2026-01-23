@@ -41,7 +41,7 @@ public class SimulationFlow {
     private void animalsNextDayLived() {
         simulation.getSeason().nextDay();
         simulation.getAliveAnimals().forEach(a ->
-                a.informListeners(AnimalStatisticsData.ADD_DAYS_LIVED)
+                a.nextDayLived()
         );
     }
 
@@ -82,8 +82,6 @@ public class SimulationFlow {
     }
 
     private void moveAnimals() {
-
-
         for (Animal currAnimal : simulation.getAliveAnimals()) {
             if (!simulation.getSeason().isWinter()) {
                 simulation.getMap().move(currAnimal, (int) (simulation.getEnergyRestoredByPlant() * SUMMER_PLANT_ENERGY_BOOST));

@@ -53,7 +53,7 @@ public class SimulationStarterPresenter {
         }
 
         SimulationApp simApp = new SimulationApp();
-        RectangularMap map = new RectangularMap(mapWidthInput.getValue(), mapHeightInput.getValue(), startingPlantsCountInput.getValue());
+        RectangularMap map = new RectangularMap(mapWidthInput.getValue(), mapHeightInput.getValue());
 
         Simulation simulation = new SimulationBuilder()
                 .withAnimalsPositions(World.generatePositions(
@@ -73,14 +73,14 @@ public class SimulationStarterPresenter {
                 .withUsedEnergyForReproduction(reproductionEnergyInput.getValue())
                 .withMaxMutationsCount(maxMutationsInput.getValue())
                 .withMinMutationsCount(minMutationsInput.getValue())
+                .withPlantsStartingCount(startingPlantsCountInput.getValue())
                 .build();
         try {
             simApp.launchSimulation(map, simulation);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Thread thread = Thread.ofVirtual().start(simulation);
-        thread.start();
+        Thread.ofVirtual().start(simulation);
     }
 
     private void checkSimulationParameters() {
