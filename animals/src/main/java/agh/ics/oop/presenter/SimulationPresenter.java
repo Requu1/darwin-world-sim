@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,6 +25,9 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
     private static final int DEFAULT_FONT_SIZE = 15;
     private static final int WIDTH_OFFSET = CELL_SIZE + CELL_SIZE / 2;
     private static final int HEIGHT_OFFSET = CELL_SIZE + CELL_SIZE / 2;
+
+    private final HashMap<String, Image> imageCache = new HashMap<>();
+
 
     @FXML
     private Label simulationDayLabel;
@@ -167,7 +171,7 @@ public class SimulationPresenter implements MapChangeListener, SimulationChangeL
             double drawX = x + offsetX;
             double drawY = y + offsetY;
 
-            new AnimalBox(animals.get(i)).draw(gc, drawX, drawY, animalSize, Objects.equals(animals.get(i), selectedAnimal));
+            new AnimalBox(animals.get(i), imageCache).draw(gc, drawX, drawY, animalSize, Objects.equals(animals.get(i), selectedAnimal));
         }
     }
 

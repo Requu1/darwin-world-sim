@@ -70,8 +70,7 @@ public class RectangularMap {
         synchronized (plants) {
             if (plants.get(animal.getPosition()) != null) {
                 this.plants.remove(animal.getPosition());
-                animal.addEnergy(energyRestoredByPlant);
-                animal.informListeners(AnimalStatisticsData.ADD_PLANT_EATEN);
+                animal.eatPlant(energyRestoredByPlant);
             }
         }
 
@@ -121,8 +120,8 @@ public class RectangularMap {
                 .createAnimal();
         place(newBornAnimal);
         this.bornAnimals.add(newBornAnimal);
-        animal1.informListeners(AnimalStatisticsData.ADD_CHILDREN_COUNT);
-        animal2.informListeners(AnimalStatisticsData.ADD_CHILDREN_COUNT);
+        animal1.addChildren();
+        animal2.addChildren();
         informListeners("New animal has been reproduced");
     }
 

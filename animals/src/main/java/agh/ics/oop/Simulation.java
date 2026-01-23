@@ -66,6 +66,10 @@ public class Simulation implements Runnable {
         this.listeners.add(listener);
     }
 
+    public void removeListener(SimulationChangeListener listener) {
+        this.listeners.remove(listener);
+    }
+
     public void togglePause() {
         paused = !paused;
         if (!paused) {

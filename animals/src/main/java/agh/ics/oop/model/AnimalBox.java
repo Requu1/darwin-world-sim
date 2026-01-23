@@ -8,11 +8,10 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class AnimalBox {
-    private static final HashMap<String, Image> imageCache = new HashMap<>();
     private final Animal animal;
     private final Image image;
 
-    public AnimalBox(Animal animal) {
+    public AnimalBox(Animal animal, HashMap<String, Image> imageCache) {
         this.animal = animal;
         String resourceName = animal.getResourceName();
 

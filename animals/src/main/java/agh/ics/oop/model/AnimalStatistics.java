@@ -5,7 +5,7 @@ import agh.ics.oop.model.util.AnimalStatisticsData;
 import java.util.List;
 
 public class AnimalStatistics {
-    private final List<Integer> genomeSequence;
+    private List<Integer> genomeSequence;
     private int activeGene;
     private int energy;
     private int plantsEaten = 0;
@@ -21,7 +21,7 @@ public class AnimalStatistics {
 
     public void updateStats(AnimalStatisticsData data, Animal animal) {
         switch (data) {
-            case UPDATE_GENOME_SEQUENCE -> animal.getGenome().
+            case UPDATE_GENOME_SEQUENCE -> this.genomeSequence = animal.getGenome().getSequence();
             case ADD_DAYS_LIVED -> daysLived++;
             case ADD_CHILDREN_COUNT -> childrenCount++;
             case SET_DAY_OF_DEATH -> dayOfDeath = daysLived;

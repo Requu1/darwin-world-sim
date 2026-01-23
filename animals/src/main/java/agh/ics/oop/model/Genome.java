@@ -22,6 +22,10 @@ public class Genome {
         return this.genomeSequence.get(currGenomeIdx);
     }
 
+    public void setCurrGene(int gene) {
+        this.genomeSequence.set(currGenomeIdx, gene);
+    }
+
     public void updateCurrGene() {
         currGenomeIdx = (currGenomeIdx + 1) % genomeSequence.size();
     }

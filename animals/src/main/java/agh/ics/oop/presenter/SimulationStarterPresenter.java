@@ -2,13 +2,15 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
 import agh.ics.oop.SimulationApp;
-import agh.ics.oop.World;
 import agh.ics.oop.model.RectangularMap;
+import agh.ics.oop.model.Vector2d;
 import agh.ics.oop.model.util.SimulationBuilder;
 import javafx.fxml.FXML;
 import javafx.scene.control.Spinner;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class SimulationStarterPresenter {
     @FXML
@@ -44,6 +46,16 @@ public class SimulationStarterPresenter {
     @FXML
     private Spinner<Integer> warmDistanceInput;
 
+    private ArrayList<Vector2d> generateAnimalsPositions(int positionsCount, int mapWidth, int mapHeight) {
+        Random randomPos = new Random();
+        ArrayList<Vector2d> positions = new ArrayList<>();
+
+        for (int i = 0; i < positionsCount; i++) {
+            positions.add(new Vector2d(randomPos.nextInt(mapWidth + 1), randomPos.nextInt(mapHeight + 1)));
+        }
+        return positions;
+    }
+
     @FXML
     public void onSimulationStartClicked() {
         try {
@@ -56,7 +68,7 @@ public class SimulationStarterPresenter {
         RectangularMap map = new RectangularMap(mapWidthInput.getValue(), mapHeightInput.getValue());
 
         Simulation simulation = new SimulationBuilder()
-                .withAnimalsPositions(World.generatePositions(
+                .withAnimalsPositions(generateAnimalsPositions(
                         startingAnimalCountInput.getValue(),
                         mapWidthInput.getValue(),
                         mapHeightInput.getValue()))

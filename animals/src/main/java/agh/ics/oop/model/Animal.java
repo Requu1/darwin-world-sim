@@ -1,6 +1,5 @@
 package agh.ics.oop.model;
 
-import agh.ics.oop.World;
 import agh.ics.oop.model.util.AnimalChangeListener;
 import agh.ics.oop.model.util.AnimalStatisticsData;
 
@@ -27,7 +26,7 @@ public class Animal implements WorldElement {
         this.animalListeners.add(listener);
     }
 
-    public void informListeners(AnimalStatisticsData data) {
+    private void informListeners(AnimalStatisticsData data) {
         for (AnimalChangeListener listener : this.animalListeners) {
             listener.animalChanged(data, this);
         }
@@ -131,24 +130,68 @@ public class Animal implements WorldElement {
         informListeners(AnimalStatisticsData.UPDATE_ANIMAL_ENERGY);
     }
 
-    private void changeGenomeSequence() {
+    private void changeGenomeSequence(List<Animal> animals, int mapWidth) {
+        if (animals == null || animals.size() < 2) {
+            return;
+        }
+        Animal nearestAnimal = null;
+        double bestDistance = Double.POSITIVE_INFINITY;
+
+        for (Animal a : animals) {
+            if (a == null || a == this || !a.isAlive()) {
+                continue;
+            }
+            double dist = wrappedDistance(this.posVector, a.getPosition(), mapWidth);
+            if (dist < bestDistance) {
+                bestDistance = dist;
+                nearestAnimal = a;
+            }
+        }
+        if (nearestAnimal == null) {
+            return;
+        }
+        int bestGene = genome.getCurrGene();
+        double bestDistAfterMove = Double.POSITIVE_INFINITY;
+
+        for (int gene = 0; gene <= 7; gene++) {
+            MapDirection direction = this.facingDirection;
+            for (int i = 0; i < gene; i++) {
+                direction = MapDirection.next(direction);
+            }
+
+            Vector2d candidatePos = this.posVector.add(direction.toUnitVector());
+            double dist = wrappedDistance(candidatePos, nearestAnimal.getPosition(), mapWidth);
+            if (dist < bestDistAfterMove) {
+                bestDistAfterMove = dist;
+                bestGene = gene;
+            }
+        }
+        genome.setCurrGene(bestGene);
         informListeners(AnimalStatisticsData.UPDATE_GENOME_SEQUENCE);
     }
 
 
-    public int calculateEnergyLoss(double worldTemperature, List<Animal> animals, double warmDist) {
+    public int calculateEnergyLoss(double worldTemperature, List<Animal> animals, double warmDist, int mapWidth) {
         double currentLoss = ENERGY_LOSS_FACTOR;
         long neighborsCount = animals.stream()
-                .filter(animal -> animal != this && World.calcDistance(this, animal) <= warmDist)
+                .filter(animal -> animal != this && wrappedDistance(this.posVector, animal.getPosition(), mapWidth) <= warmDist)
                 .count();
 
         if (neighborsCount == 0) {
-            changeGenomeSequence();
+            changeGenomeSequence(animals, mapWidth);
             double noNeighboursPenalty = Math.abs(worldTemperature) * COLD_PENALTY;
             currentLoss += noNeighboursPenalty;
         }
 
         return (int) currentLoss;
+    }
+
+    private static double wrappedDistance(Vector2d a, Vector2d b, int mapWidth) {
+        double x = Math.abs(a.x() - b.x());
+        x = Math.min(x, mapWidth - x);
+        double y = Math.abs(a.y() - b.y());
+
+        return Math.sqrt(x * x + y * y);
     }
 
     public double getEnergyRatio() {
@@ -161,6 +204,15 @@ public class Animal implements WorldElement {
 
     public void nextDayLived() {
         informListeners(AnimalStatisticsData.ADD_DAYS_LIVED);
+    }
+
+    public void eatPlant(int energyRestoredByPlant) {
+        this.addEnergy(energyRestoredByPlant);
+        informListeners(AnimalStatisticsData.ADD_PLANT_EATEN);
+    }
+
+    public void addChildren() {
+        informListeners(AnimalStatisticsData.ADD_CHILDREN_COUNT);
     }
 
 

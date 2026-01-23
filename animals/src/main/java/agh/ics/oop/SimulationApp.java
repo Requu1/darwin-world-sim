@@ -11,6 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class SimulationApp extends Application {
 
@@ -40,13 +41,17 @@ public class SimulationApp extends Application {
         //map.addListener(new FileMapDisplay());
         Stage stage = new Stage();
         configureStage(stage, viewRoot);
-        stage.setTitle("Simulation app");
+        stage.setTitle("Simulation app with MapID: " + map.getId());
         stage.show();
+        stage.setOnCloseRequest(_ -> {
+            map.removeListener(presenter);
+            simulation.removeListener(presenter);
+        });
 
-        launchSimulationStatistics(simulation);
+        launchSimulationStatistics(simulation, map.getId());
     }
 
-    private void launchSimulationStatistics(Simulation simulation) throws IOException {
+    private void launchSimulationStatistics(Simulation simulation, UUID mapID) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getClassLoader().getResource("simulationStatistics.fxml"));
         BorderPane viewRoot = loader.load();
@@ -55,8 +60,10 @@ public class SimulationApp extends Application {
         simulation.addListener(presenter);
         Stage stage = new Stage();
         configureStage(stage, viewRoot);
-        stage.setTitle("Simulation stats");
+        stage.setTitle("Simulation stats with MapID: " + mapID);
         stage.show();
+        stage.setOnCloseRequest(_ ->
+                simulation.removeListener(presenter));
 
     }
 

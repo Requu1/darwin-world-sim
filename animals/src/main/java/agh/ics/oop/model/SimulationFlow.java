@@ -1,7 +1,6 @@
 package agh.ics.oop.model;
 
 import agh.ics.oop.Simulation;
-import agh.ics.oop.model.util.AnimalStatisticsData;
 import agh.ics.oop.model.util.SimulationSteps;
 
 import java.util.ArrayList;
@@ -50,7 +49,8 @@ public class SimulationFlow {
         if (simulation.getSeason().isWinter()) {
             simulation.getAliveAnimals()
                     .forEach(a -> a.subtractEnergy(a
-                            .calculateEnergyLoss(simulation.getSeason().getCurrentTemperature(), simulation.getAliveAnimals(), simulation.getWarmDistance())));
+                            .calculateEnergyLoss(simulation.getSeason().getCurrentTemperature(), simulation.getAliveAnimals(),
+                                    simulation.getWarmDistance(), simulation.getMap().getCurrentBounds().upperRightCorner().x() + 1)));
         }
     }
 
