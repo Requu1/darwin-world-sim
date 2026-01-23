@@ -6,7 +6,7 @@ import agh.ics.oop.animal.AnimalStatsUpdater;
 import java.util.ArrayList;
 
 public class SimulationFlow {
-    private final static double SUMMER_PLANT_COUNT_BOOST = 1.8;
+    private final static double SUMMER_PLANT_COUNT_BOOST = 2;
     private final static double SUMMER_PLANT_ENERGY_BOOST = 1.5;
 
     private final Simulation simulation;

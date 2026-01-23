@@ -99,6 +99,9 @@ public class SimulationStarterPresenter {
         if (minMutationsInput.getValue() > maxMutationsInput.getValue()) {
             throw new IllegalArgumentException("Max mutations cannot be greater than minimal");
         }
+        if (reproductionEnergyInput.getValue() > canReproduceEnergyForAnimalInput.getValue()) {
+            throw new IllegalArgumentException("Minimal energy needed for reproduction has to be higher or equal to energy used for reproduction");
+        }
     }
 
 }
