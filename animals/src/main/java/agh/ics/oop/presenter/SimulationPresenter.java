@@ -9,6 +9,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -17,11 +19,34 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class SimulationPresenter implements MapChangeListener {
+public class SimulationPresenter implements MapChangeListener, SimulationChangeListener {
     private static final int CELL_SIZE = 30;
 
     private static final int WIDTH_OFFSET = CELL_SIZE + CELL_SIZE / 2;
     private static final int HEIGHT_OFFSET = CELL_SIZE + CELL_SIZE / 2;
+
+    @FXML
+    private Label simulationDayLabel;
+    @FXML
+    private Label worldTemperatureLabel;
+    @FXML
+    private ImageView seasonImage;
+
+    @FXML
+    private Label freePositionsLabel;
+    @FXML
+    private Label plantsCountLabel;
+    @FXML
+    private Label averageEnergyLevelLabel;
+    @FXML
+    private Label averageLifeSpanLabel;
+    @FXML
+    private Label mostPopularGenomeLabel;
+    @FXML
+    private Label averageChildrenCountLabel;
+    @FXML
+    private Label animalsCountLabel;
+
     @FXML
     private Label activeGeneLabel;
     @FXML
@@ -197,10 +222,8 @@ public class SimulationPresenter implements MapChangeListener {
             selectedAnimal = null;
         }
 
-        Platform.runLater(() -> {
-            drawMap();
-            updateAnimalStats();
-        });
+        this.drawMap();
+        updateAnimalStats();
 
     }
 
@@ -231,6 +254,37 @@ public class SimulationPresenter implements MapChangeListener {
         }
     }
 
+    private void updateSimulationStats() {
+        if (simulation != null) {
+            freePositionsLabel.setText("Free positions: " + simulation.getSimulationStats().getFreePositionsCount());
+            plantsCountLabel.setText("Plants count: " + simulation.getSimulationStats().getPlantsCount());
+            averageEnergyLevelLabel.setText("Average energy level: " + simulation.getSimulationStats().getAvgEnergyLevel());
+            mostPopularGenomeLabel.setText("Most popular genome: " + simulation.getSimulationStats().getMostPopularGenome());
+            averageChildrenCountLabel.setText("Average children count: " + simulation.getSimulationStats().getAvgChildrenCount());
+            animalsCountLabel.setText("Animals count: " + simulation.getSimulationStats().getAnimalsCount());
+
+            if (simulation.getSimulationStats().getAvgAnimalsLifeSpan() == -1) {
+                averageLifeSpanLabel.setText("Average life span: ");
+            } else {
+                averageLifeSpanLabel.setText("Average life span: " + simulation.getSimulationStats().getAvgAnimalsLifeSpan());
+            }
+        }
+    }
+
+    private void updateWeatherStats() {
+        if (simulation != null) {
+            Image image;
+            if (simulation.getSeason().isWinter()) {
+                image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/winter.png")));
+            } else {
+                image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/summer.png")));
+            }
+            seasonImage.setImage(image);
+            worldTemperatureLabel.setText("World temperature: " + simulation.getSeason().getCurrentTemperature());
+            simulationDayLabel.setText("Simulation day: " + simulation.getSeason().getCurrentDay());
+        }
+    }
+
     @FXML
     private void onPauseResumeClicked() {
         if (simulation != null) {
@@ -253,4 +307,11 @@ public class SimulationPresenter implements MapChangeListener {
         });
     }
 
+    @Override
+    public void simulationChanged(Simulation simulation) {
+        Platform.runLater(() -> {
+            updateSimulationStats();
+            updateWeatherStats();
+        });
+    }
 }

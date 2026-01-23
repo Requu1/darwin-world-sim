@@ -16,28 +16,35 @@ public class SimulationStats {
 
     public int getAvgAnimalsLifeSpan() {
         int sumOfLifeSpan = 0;
+        int deadAnimals = 0;
         for (Animal animal : simulation.getAllAnimals()) {
-            sumOfLifeSpan += animal.getStats().getDaysLived();
+            if (!animal.isAlive()) {
+                deadAnimals++;
+                sumOfLifeSpan += animal.getStats().getDaysLived();
+            }
+        }
+        if (sumOfLifeSpan == 0) {
+            return -1;
         }
 
-        return sumOfLifeSpan / simulation.getAllAnimals().size();
+        return sumOfLifeSpan / deadAnimals;
 
     }
 
     public int getAvgChildrenCount() {
         int sumOfChildrenCount = 0;
-        for (Animal animal : simulation.getAllAnimals()) {
+        for (Animal animal : simulation.getAliveAnimals()) {
             sumOfChildrenCount += animal.getStats().getChildrenCount();
         }
-        return sumOfChildrenCount / simulation.getAllAnimals().size();
+        return sumOfChildrenCount / simulation.getAliveAnimals().size();
     }
 
     public int getAvgEnergyLevel() {
         int sumOfEnergy = 0;
-        for (Animal animal : simulation.getAllAnimals()) {
+        for (Animal animal : simulation.getAliveAnimals()) {
             sumOfEnergy += animal.getEnergy();
         }
-        return sumOfEnergy / simulation.getAllAnimals().size();
+        return sumOfEnergy / simulation.getAliveAnimals().size();
     }
 
     public List<Integer> getMostPopularGenome() {
@@ -60,5 +67,9 @@ public class SimulationStats {
 
     public int getPlantsCount() {
         return simulation.getMap().getPlants().size();
+    }
+
+    public int getAnimalsCount() {
+        return simulation.getAliveAnimals().size();
     }
 }

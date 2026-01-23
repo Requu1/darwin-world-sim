@@ -3,8 +3,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="600.0" minWidth="900.0"
@@ -26,6 +27,34 @@
             <padding>
                 <Insets left="30" right="30"/>
             </padding>
+
+            <Label text="Weather conditions" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <VBox>
+                <Label fx:id="simulationDayLabel" text="Simulation day: "></Label>
+                <HBox alignment="CENTER_LEFT" spacing="5" maxWidth="200">
+                    <Label fx:id="worldTemperatureLabel" text="World temperature: "></Label>
+                    <ImageView fx:id="seasonImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true"
+                               preserveRatio="true">
+                        <image>
+                            <Image url="summer.png"></Image>
+                        </image>
+                    </ImageView>
+                </HBox>
+            </VBox>
+
+
+            <Label text="Simulation statistics" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+            <VBox alignment="CENTER_LEFT" spacing="5" maxWidth="200">
+                <Label fx:id="animalsCountLabel" text="Animals count: "/>
+                <Label fx:id="plantsCountLabel" text="Plants count: "/>
+                <Label fx:id="freePositionsLabel" text="Free positions: "/>
+                <Label fx:id="mostPopularGenomeLabel" text="Most popular genome: "/>
+                <Label fx:id="averageEnergyLevelLabel" text="Average energy level: "/>
+                <Label fx:id="averageLifeSpanLabel" text="Average life span: "/>
+                <Label fx:id="averageChildrenCountLabel" text="Average children count: "/>
+            </VBox>
+
 
             <Label text="Statistics of the chosen animal" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
 

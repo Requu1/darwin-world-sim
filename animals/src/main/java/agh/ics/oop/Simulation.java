@@ -26,6 +26,19 @@ public class Simulation implements Runnable {
     private final Object pauseLock = new Object();
 
     private final SimulationFlow simulationStepper;
+    private final SimulationStats simulationStats;
+
+    private final List<SimulationChangeListener> listeners = new ArrayList<>();
+
+    private void informListeners() {
+        for (SimulationChangeListener listener : listeners) {
+            listener.simulationChanged(this);
+        }
+    }
+
+    public void addListener(SimulationChangeListener listener) {
+        this.listeners.add(listener);
+    }
 
     public void togglePause() {
         paused = !paused;
@@ -56,6 +69,12 @@ public class Simulation implements Runnable {
         this.season = new SeasonManager(seasonDuration, minTemperature);
         initializeAnimals(animalsPositions);
         simulationStepper = new SimulationFlow(this);
+        this.simulationStats = new SimulationStats(this);
+    }
+
+
+    public SimulationStats getSimulationStats() {
+        return this.simulationStats;
     }
 
     public RectangularMap getMap() {
@@ -135,6 +154,7 @@ public class Simulation implements Runnable {
                 simulationStepper.phaseNextSimulationStep(UPDATE_WEATHER_CONDITIONS);
                 simulationStepper.phaseNextSimulationStep(CHECKING_ANIMALS_HEALTH);
                 simulationStepper.phaseNextSimulationStep(NEXT_DAY);
+                informListeners();
                 delay();
             }
 

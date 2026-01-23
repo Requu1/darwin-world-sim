@@ -66,7 +66,7 @@
                     <Label text="Minimal world temperature" style="-fx-font-weight: bold;"/>
                     <Spinner fx:id="minTemperatureInput" editable="true" maxWidth="200">
                         <valueFactory>
-                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="-30" max="-10" initialValue="-20"/>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="-30" max="-10" initialValue="-15"/>
                         </valueFactory>
                     </Spinner>
                 </VBox>
@@ -86,7 +86,7 @@
                     <Label text="Season duration" style="-fx-font-weight: bold;"/>
                     <Spinner fx:id="seasonDurationInput" editable="true" maxWidth="200">
                         <valueFactory>
-                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="200" initialValue="50"/>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="200" initialValue="20"/>
                         </valueFactory>
                     </Spinner>
                 </VBox>
@@ -95,7 +95,7 @@
                     <Label text="Default animal energy" style="-fx-font-weight: bold;"/>
                     <Spinner fx:id="defaultEnergyInput" editable="true" maxWidth="200">
                         <valueFactory>
-                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="100" initialValue="50"/>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="100" initialValue="80"/>
                         </valueFactory>
                     </Spinner>
                 </VBox>
@@ -110,10 +110,10 @@
                 </VBox>
 
                 <VBox spacing="5">
-                    <Label text="Energy to reproduce (min)" style="-fx-font-weight: bold;"/>
+                    <Label text="Energy to reproduce (minimal)" style="-fx-font-weight: bold;"/>
                     <Spinner fx:id="canReproduceEnergyForAnimalInput" editable="true" maxWidth="200">
                         <valueFactory>
-                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="50" initialValue="30"/>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="50" initialValue="40"/>
                         </valueFactory>
                     </Spinner>
                 </VBox>

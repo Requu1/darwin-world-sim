@@ -16,6 +16,10 @@ public class SeasonManager {
         return (currentDay / seasonDuration) % 2 != 0;
     }
 
+    public int getCurrentDay() {
+        return this.currentDay;
+    }
+
     public void nextDay() {
         this.currentDay += 1;
     }

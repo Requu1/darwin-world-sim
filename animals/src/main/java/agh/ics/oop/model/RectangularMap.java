@@ -42,7 +42,7 @@ public class RectangularMap {
     public RectangularMap(int width, int height, int energyRestoredByPlant, int startingPlantsCount,
                           int minimalEnergyForReproduction, int usedEnergyForReproduction, int minMutationCount, int maxMutationCount) {
         this.id = UUID.randomUUID();
-        this.upperRightCorner = new Vector2d(width, height);
+        this.upperRightCorner = new Vector2d(width - 1, height - 1);
         this.energyRestoredByPlant = energyRestoredByPlant;
         this.minimalEnergyForReproduction = minimalEnergyForReproduction;
         this.usedEnergyForReproduction = usedEnergyForReproduction;
@@ -176,6 +176,9 @@ public class RectangularMap {
     }
 
     public List<Animal> animalsAtPos(Vector2d pos) {
+        if (this.animals.get(pos) == null) {
+            return null;
+        }
         return new ArrayList<>(this.animals.get(pos));
     }
 

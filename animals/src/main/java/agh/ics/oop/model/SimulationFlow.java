@@ -7,6 +7,8 @@ import agh.ics.oop.model.util.SimulationSteps;
 import java.util.ArrayList;
 
 public class SimulationFlow {
+    private final static double SUMMER_PLANT_BOOST = 1.5;
+
     private final Simulation simulation;
 
     public SimulationFlow(Simulation simulation) {
@@ -53,7 +55,11 @@ public class SimulationFlow {
 
 
     private void growPlants() {
-        simulation.getMap().growPlants(simulation.getPlantsGrowingDaily());
+        if (simulation.getSeason().isWinter()) {
+            simulation.getMap().growPlants(simulation.getPlantsGrowingDaily());
+        } else {
+            simulation.getMap().growPlants((int) (simulation.getPlantsGrowingDaily() * SUMMER_PLANT_BOOST));
+        }
     }
 
     private void updateDailyEnergyLoss() {
