@@ -10,7 +10,7 @@ public class Animal implements WorldElement {
     private final static Vector2d DEFAULT_POS = new Vector2d(2, 2);
     private final static int MAX_ENERGY = 100;
     private final static int DEFAULT_ENERGY = 50;
-    private final static double COLD_PENALTY = 2;
+    private final static double COLD_PENALTY = 1.5;
     private final static double ENERGY_LOSS = 2;
 
     private MapDirection facingDirection;

@@ -124,7 +124,6 @@ public class Simulation implements Runnable {
                         }
                     }
                 }
-
                 simulationStepper.phaseNextSimulationStep(GROWING_PLANTS);
                 simulationStepper.phaseNextSimulationStep(MOVING_ANIMALS);
                 simulationStepper.phaseNextSimulationStep(ANIMALS_REPRODUCTION);
@@ -147,7 +146,7 @@ public class Simulation implements Runnable {
 
     private void delay() {
         try {
-            Thread.sleep(200);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

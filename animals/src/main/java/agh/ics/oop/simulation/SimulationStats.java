@@ -34,6 +34,9 @@ public class SimulationStats {
         for (Animal animal : simulation.getAliveAnimals()) {
             sumOfChildren += animal.getStats().getChildrenCount();
         }
+        if (animalsCount == 0) {
+            return -1;
+        }
         return sumOfChildren / animalsCount;
     }
 
@@ -48,6 +51,9 @@ public class SimulationStats {
         int sumEnergy = 0;
         for (Animal animal : simulation.getAliveAnimals()) {
             sumEnergy += animal.getEnergy();
+        }
+        if (animalsCount == 0) {
+            return -1;
         }
         return sumEnergy / animalsCount;
     }

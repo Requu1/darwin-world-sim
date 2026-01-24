@@ -12,7 +12,7 @@
             fx:controller="agh.ics.oop.presenters.SimulationPresenter">
 
     <left>
-        <VBox alignment="CENTER" spacing="10">
+        <VBox alignment="TOP_CENTER" spacing="10">
             <padding>
                 <Insets top="10" right="10" bottom="10" left="20"/>
             </padding>
@@ -29,9 +29,9 @@
             </padding>
 
             <Label text="Weather conditions" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-            <VBox>
+            <VBox alignment="CENTER">
                 <Label fx:id="simulationDayLabel" text="Simulation day: "/>
-                <HBox alignment="CENTER_LEFT" spacing="5" maxWidth="200">
+                <HBox alignment="CENTER_RIGHT" spacing="5" maxWidth="200">
                     <Label fx:id="worldTemperatureLabel" text="World temperature: "/>
                     <ImageView fx:id="seasonImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true"
                                preserveRatio="true">

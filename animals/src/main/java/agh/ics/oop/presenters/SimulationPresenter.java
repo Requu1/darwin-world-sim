@@ -2,12 +2,12 @@ package agh.ics.oop.presenters;
 
 import agh.ics.oop.animal.Animal;
 import agh.ics.oop.animal.AnimalBox;
-import agh.ics.oop.other.Plant;
 import agh.ics.oop.map.Boundary;
 import agh.ics.oop.map.MapChangeListener;
 import agh.ics.oop.map.RectangularMap;
+import agh.ics.oop.other.Plant;
+import agh.ics.oop.other.Vector2d;
 import agh.ics.oop.simulation.Simulation;
-import agh.ics.oop.other.*;
 import agh.ics.oop.simulation.SimulationChangeListener;
 import javafx.application.Platform;
 import javafx.fxml.FXML;

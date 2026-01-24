@@ -13,7 +13,7 @@ public class SeasonManager {
     }
 
     public boolean isWinter() {
-        return (currentDay / seasonDuration) % 2 != 0;
+        return ((currentDay - 1) / seasonDuration) % 2 != 0;
     }
 
     public int getCurrentDay() {
@@ -29,7 +29,7 @@ public class SeasonManager {
             return SUMMER_TEMPERATURE;
         }
 
-        int dayInWinter = currentDay % seasonDuration;
+        int dayInWinter = (currentDay - 1) % seasonDuration;
         int halfWinter = seasonDuration / 2;
 
         if (dayInWinter <= halfWinter) {
