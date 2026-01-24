@@ -130,11 +130,11 @@ public class Simulation implements Runnable {
                 simulationStepper.phaseNextSimulationStep(UPDATE_DAILY_ENERGY_LOSS);
                 simulationStepper.phaseNextSimulationStep(UPDATE_WEATHER_CONDITIONS);
                 simulationStepper.phaseNextSimulationStep(CHECKING_ANIMALS_HEALTH);
+                updateStats();
+                informListeners();
                 if (allAnimalsDead()) {
                     break;
                 }
-                updateStats();
-                informListeners();
                 delay();
                 simulationStepper.phaseNextSimulationStep(NEXT_DAY);
             }
