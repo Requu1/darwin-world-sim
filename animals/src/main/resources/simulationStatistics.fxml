@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="agh.ics.oop.presenters.SimulationStatisticsPresenter"
+            minHeight="400.0" minWidth="700.0">
+
+    <top>
+        <HBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
+            <Label text="Choose statistic:"/>
+            <ComboBox fx:id="statisticsComboBox" prefWidth="200"/>
+        </HBox>
+    </top>
+
+    <center>
+        <LineChart fx:id="simulationChart" animated="false" createSymbols="false">
+            <xAxis>
+                <NumberAxis fx:id="xAxis" label="Day"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="yAxis" label="Value"/>
+            </yAxis>
+        </LineChart>
+    </center>
+
+</BorderPane>

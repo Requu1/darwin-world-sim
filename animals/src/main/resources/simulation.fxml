@@ -1,21 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            minHeight="350.0" minWidth="650.0"
-            fx:controller="agh.ics.oop.presenter.SimulationPresenter"
->
+            minHeight="600.0" minWidth="900.0"
+            fx:controller="agh.ics.oop.presenters.SimulationPresenter">
+
+    <left>
+        <VBox alignment="TOP_CENTER" spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="20"/>
+            </padding>
+            <Label fx:id="simulationStatusLabel" text="Simulation is running" style="-fx-font-size: 15"/>
+            <Canvas fx:id="mapGrid" height="550" width="550"/>
+            <Button fx:id="pauseButton" text="Pause" onAction="#onPauseResumeClicked"/>
+        </VBox>
+    </left>
+
     <center>
-        <StackPane>
-            <VBox alignment="CENTER" spacing="10">
-                <Canvas fx:id="mapGrid" height="550" width="550"/>
-                <Label fx:id="moveInfoLabel"/>
+        <VBox alignment="TOP_CENTER" spacing="15">
+            <padding>
+                <Insets left="30" right="30"/>
+            </padding>
+
+            <Label text="Weather conditions" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <VBox alignment="CENTER">
+                <Label fx:id="simulationDayLabel" text="Simulation day: "/>
+                <HBox alignment="CENTER_RIGHT" spacing="5" maxWidth="200">
+                    <Label fx:id="worldTemperatureLabel" text="World temperature: "/>
+                    <ImageView fx:id="seasonImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true"
+                               preserveRatio="true">
+                        <Image url="summer.png"/>
+                    </ImageView>
+                </HBox>
             </VBox>
-        </StackPane>
+
+
+            <Label text="Simulation statistics" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+            <VBox alignment="CENTER_LEFT" spacing="5" maxWidth="200">
+                <Label fx:id="animalsCountLabel" text="Animals count: "/>
+                <Label fx:id="plantsCountLabel" text="Plants count: "/>
+                <Label fx:id="freePositionsLabel" text="Free positions: "/>
+                <Label fx:id="mostPopularGenomeLabel" text="Most popular genome: "/>
+                <Label fx:id="averageEnergyLevelLabel" text="Average energy level: "/>
+                <Label fx:id="averageLifeSpanLabel" text="Average life span: "/>
+                <Label fx:id="averageChildrenCountLabel" text="Average children count: "/>
+            </VBox>
+
+
+            <Label text="Statistics of the chosen animal" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+            <VBox alignment="CENTER_LEFT" spacing="5" maxWidth="200">
+                <Label fx:id="genomeSequenceLabel" text="Genome: "/>
+                <Label fx:id="activeGeneLabel" text="Active Gene: "/>
+                <Label fx:id="energyLabel" text="Energy: "/>
+                <Label fx:id="plantsEatenLabel" text="Plants eaten: "/>
+                <Label fx:id="childrenCountLabel" text="Children count: "/>
+                <Label fx:id="daysLivedLabel" text="Days lived: "/>
+                <Label fx:id="dayOfDeathLabel" text="Day of death: "/>
+            </VBox>
+        </VBox>
     </center>
+
 </BorderPane>
