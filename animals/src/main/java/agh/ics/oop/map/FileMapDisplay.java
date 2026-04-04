@@ -1,6 +1,7 @@
 package agh.ics.oop.map;
 
 import java.io.FileWriter;
+import java.io.IOException;
 
 public class FileMapDisplay implements MapChangeListener {
     @Override
@@ -10,7 +11,7 @@ public class FileMapDisplay implements MapChangeListener {
             writer.write("Move:" + message + "\n");
             writer.write(worldMap.toString());
             writer.write("\n--\n");
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

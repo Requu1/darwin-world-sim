@@ -1,7 +1,6 @@
 package agh.ics.oop.animal;
 
 public enum AnimalStatisticsData {
-    UPDATE_GENOME_SEQUENCE,
     UPDATE_ACTIVE_GENE,
     UPDATE_ANIMAL_ENERGY,
     ADD_PLANT_EATEN,

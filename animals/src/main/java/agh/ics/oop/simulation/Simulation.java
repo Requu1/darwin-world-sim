@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import static agh.ics.oop.simulation.SimulationSteps.*;
 
 public class Simulation implements Runnable {
+    private final static int DELAY_TIME = 300;
 
     private final ArrayList<Animal> animals = new ArrayList<>();
     private final RectangularMap map;
@@ -146,7 +147,7 @@ public class Simulation implements Runnable {
 
     private void delay() {
         try {
-            Thread.sleep(300);
+            Thread.sleep(DELAY_TIME);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

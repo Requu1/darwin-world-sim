@@ -2,7 +2,6 @@ package agh.ics.oop.map;
 
 import agh.ics.oop.animal.Animal;
 import agh.ics.oop.animal.Genome;
-import agh.ics.oop.map.Boundary;
 import agh.ics.oop.other.Vector2d;
 import org.junit.jupiter.api.Test;
 
@@ -64,34 +63,6 @@ class RectangularMapTest {
         assertTrue(map.getPlants().stream().allMatch(p -> p.getPosition().y() >= 0 && p.getPosition().y() <= 9));
     }
 
-    @Test
-    void reproduceAnimalsCreatesNewbornWhenTwoEligibleParentsSharePosition() {
-        //given
-        RectangularMap map = new RectangularMap(5, 5);
-        Animal parent1 = new Animal(new Vector2d(2, 2), 80, new Genome(new ArrayList<>(List.of(0, 1, 2, 3))));
-        Animal parent2 = new Animal(new Vector2d(2, 2), 60, new Genome(new ArrayList<>(List.of(4, 5, 6, 7))));
-        map.place(parent1);
-        map.place(parent2);
-
-        int minimalEnergyForReproduction = 50;
-        int usedEnergyForReproduction = 10;
-        int minMutationCount = 0;
-        int maxMutationCount = 0;
-
-        //when
-        map.reproduceAnimals(minimalEnergyForReproduction, usedEnergyForReproduction, minMutationCount, maxMutationCount);
-        List<Animal> born = map.getBornAnimals();
-
-        //then
-        assertEquals(1, born.size());
-        Animal child = born.get(0);
-        assertEquals(new Vector2d(2, 2), child.getPosition());
-        assertEquals(2 * usedEnergyForReproduction, child.getEnergy());
-        assertEquals(parent1.getGenome().getSequence().size(), child.getGenome().getSequence().size());
-        assertTrue(child.getGenome().getSequence().stream().allMatch(g -> g >= 0 && g <= 7));
-        assertEquals(70, parent1.getEnergy());
-        assertEquals(50, parent2.getEnergy());
-    }
 
     @Test
     void getCurrentBoundsReturnsExpectedCorners() {

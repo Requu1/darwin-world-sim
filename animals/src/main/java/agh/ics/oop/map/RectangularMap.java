@@ -1,27 +1,22 @@
 package agh.ics.oop.map;
 
 import agh.ics.oop.animal.Animal;
-import agh.ics.oop.animal.AnimalBuilder;
-import agh.ics.oop.animal.Genome;
 import agh.ics.oop.other.Plant;
-import agh.ics.oop.util.GenomeGenerator;
+import agh.ics.oop.other.Vector2d;
 import agh.ics.oop.util.RandomPlantPositionGenerator;
-import agh.ics.oop.other.*;
 
 import java.util.*;
 
 public class RectangularMap {
     private final static Vector2d BOTTOM_LEFT_CORNER = new Vector2d(0, 0);
+    private final static String ADD_MESSAGE = "Animal has been added to:";
+    private final static String MOVE_MESSAGE = "Animal has been moved to:";
 
     private final Map<Vector2d, List<Animal>> animals = new HashMap<>();
     private final Map<Vector2d, Plant> plants = new HashMap<>();
     private final UUID id;
-    private final ArrayList<Animal> bornAnimals = new ArrayList<>();
     private final Vector2d upperRightCorner;
     private final Vector2d lowerLeftCorner = BOTTOM_LEFT_CORNER;
-
-    private final static String ADD_MESSAGE = "Animal has been added to:";
-    private final static String MOVE_MESSAGE = "Animal has been moved to:";
 
     private final ArrayList<MapChangeListener> mapListeners = new ArrayList<>();
 
@@ -86,51 +81,6 @@ public class RectangularMap {
 
     }
 
-    public void reproduceAnimals(int minimalEnergyForReproduction, int usedEnergyForReproduction, int minMutationCount, int maxMutationCount) {
-        synchronized (animals) {
-            for (Vector2d pos : this.animals.keySet()) {
-                if (animals.get(pos).size() < 2) {
-                    continue;
-                }
-                List<Animal> potentialParents = animals.get(pos).stream()
-                        .filter(a -> a.getEnergy() >= minimalEnergyForReproduction)
-                        .sorted(Comparator.comparingInt(Animal::getEnergy).reversed())
-                        .limit(2)
-                        .toList();
-                if (potentialParents.size() == 2) {
-                    Animal animal1 = potentialParents.get(0);
-                    Animal animal2 = potentialParents.get(1);
-                    reproduce(animal1, animal2, usedEnergyForReproduction, minMutationCount, maxMutationCount);
-                    animal1.subtractEnergy(usedEnergyForReproduction);
-                    animal2.subtractEnergy(usedEnergyForReproduction);
-                }
-            }
-        }
-    }
-
-
-    public void clearBornAnimals() {
-        this.bornAnimals.clear();
-    }
-
-    public ArrayList<Animal> getBornAnimals() {
-        return new ArrayList<>(this.bornAnimals);
-    }
-
-
-    private void reproduce(Animal animal1, Animal animal2, int usedEnergyForReproduction, int minMutationCount, int maxMutationCount) {
-        Animal newBornAnimal = new AnimalBuilder()
-                .withEnergy(2 * usedEnergyForReproduction)
-                .withGenome(new Genome(GenomeGenerator.generateGenomeFromReproducing(animal1, animal2, minMutationCount, maxMutationCount)))
-                .withPosition(animal1.getPosition())
-                .createAnimal();
-        place(newBornAnimal);
-        this.bornAnimals.add(newBornAnimal);
-        animal1.addChildren();
-        animal2.addChildren();
-        informListeners("New animal has been reproduced");
-    }
-
 
     public void growPlants(int plantsCount) {
         RandomPlantPositionGenerator generator = new RandomPlantPositionGenerator(this.upperRightCorner.x() + 1, this.upperRightCorner.y() + 1, plantsCount, plants.keySet());
@@ -193,10 +143,8 @@ public class RectangularMap {
         }
     }
 
-
     public Boundary getCurrentBounds() {
         return new Boundary(upperRightCorner, lowerLeftCorner);
     }
-
 
 }

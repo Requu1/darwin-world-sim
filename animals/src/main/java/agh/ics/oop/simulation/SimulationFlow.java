@@ -1,9 +1,15 @@
 package agh.ics.oop.simulation;
 
 import agh.ics.oop.animal.Animal;
+import agh.ics.oop.animal.AnimalBreeder;
 import agh.ics.oop.animal.AnimalStatsUpdater;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import static agh.ics.oop.animal.AnimalEnergyManager.calculateEnergyLoss;
 
 public class SimulationFlow {
     private final static double SUMMER_PLANT_COUNT_BOOST = 2;
@@ -46,8 +52,8 @@ public class SimulationFlow {
     private void updateEnergyLossDueToLowTemperature() {
         if (simulation.getSeason().isWinter()) {
             simulation.getAliveAnimals()
-                    .forEach(a -> a.subtractEnergy(a
-                            .calculateEnergyLoss(simulation.getSeason().getCurrentTemperature(), simulation.getAliveAnimals(),
+                    .forEach(a -> a.subtractEnergy(
+                            calculateEnergyLoss(a, simulation.getSeason().getCurrentTemperature(), simulation.getAliveAnimals(),
                                     simulation.getWarmDistance(), simulation.getMap().getCurrentBounds().upperRightCorner().x() + 1)));
         }
     }
@@ -67,16 +73,40 @@ public class SimulationFlow {
 
 
     private void reproduceAnimalsOnTheMap() {
-        simulation.getMap()
-                .reproduceAnimals(simulation.getMinimalEnergyForReproduction(), simulation.getUsedEnergyForReproduction(),
-                        simulation.getMinMutationCount(), simulation.getMaxMutationCount());
-        updateBornAnimals(simulation.getMap().getBornAnimals());
+        for (List<Animal> animalsOnTheSamePos : this.simulation.getMap().getPositionsWithAnimals()) {
+            if (animalsOnTheSamePos.size() < 2) {
+                continue;
+            }
+            List<Animal> shuffledAnimals = new ArrayList<>(animalsOnTheSamePos);
+            Collections.shuffle(shuffledAnimals);
+
+            Comparator<Animal> animalComparator = Comparator
+                    .comparingInt(Animal::getEnergy)
+                    .thenComparingInt(a -> a.getStats().getDaysLived())
+                    .thenComparingInt(a -> a.getStats().getChildrenCount())
+                    .reversed();
+
+            List<Animal> potentialParents = shuffledAnimals.stream()
+                    .filter(a -> a.getEnergy() >= this.simulation.getMinimalEnergyForReproduction())
+                    .sorted(animalComparator)
+                    .limit(2)
+                    .toList();
+
+            if (potentialParents.size() == 2) {
+                Animal animal1 = potentialParents.get(0);
+                Animal animal2 = potentialParents.get(1);
+                Animal newBornAnimal = AnimalBreeder.reproduce(animal1, animal2, this.simulation.getUsedEnergyForReproduction(),
+                        this.simulation.getMinMutationCount(), this.simulation.getMaxMutationCount());
+                addBornAnimal(newBornAnimal);
+            }
+        }
     }
 
-    private void updateBornAnimals(ArrayList<Animal> bornAnimals) {
-        bornAnimals.forEach(a -> a.addListener(new AnimalStatsUpdater()));
-        simulation.getAllAnimals().addAll(bornAnimals);
-        simulation.getMap().clearBornAnimals();
+
+    private void addBornAnimal(Animal animal) {
+        animal.addListener(new AnimalStatsUpdater());
+        simulation.getAllAnimals().add(animal);
+        simulation.getMap().place(animal);
     }
 
     private void moveAnimals() {

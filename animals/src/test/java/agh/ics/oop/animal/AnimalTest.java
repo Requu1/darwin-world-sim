@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static agh.ics.oop.animal.AnimalEnergyManager.calculateEnergyLoss;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AnimalTest {
@@ -69,7 +70,7 @@ class AnimalTest {
     }
 
     @Test
-    void calculateEnergyLossIncreasesWhenNoNeighborsAndUpdatesCurrentGeneTowardNearestAnimal() {
+    void calculateEnergyLossIncreasesWhenNoNeighbors() {
         //given
         Genome genome = new Genome(new ArrayList<>(List.of(0)));
         Animal animal = new Animal(new Vector2d(0, 0), 50, genome);
@@ -80,11 +81,10 @@ class AnimalTest {
         int mapWidth = 5;
 
         //when
-        int loss = animal.calculateEnergyLoss(worldTemperature, animals, warmDist, mapWidth);
+        int loss = calculateEnergyLoss(animal, worldTemperature, animals, warmDist, mapWidth);
 
         //then
         assertEquals(30, loss);
-        assertEquals(2, animal.getGenome().getCurrGene());
     }
 
     @Test
@@ -98,7 +98,7 @@ class AnimalTest {
         int mapWidth = 5;
 
         //when
-        int loss = animal.calculateEnergyLoss(worldTemperature, animals, warmDist, mapWidth);
+        int loss = calculateEnergyLoss(animal, worldTemperature, animals, warmDist, mapWidth);
 
         //then
         assertEquals(2, loss);
