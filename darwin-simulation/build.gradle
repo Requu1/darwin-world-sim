@@ -24,10 +24,18 @@ dependencies {
 
 test {
     useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat = "full"
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
 }
 
 application {
-    getMainClass().set('agh.ics.oop.World')
+    getMainClass().set('agh.ics.oop.app.WorldGUI')
 }
 
 java {
