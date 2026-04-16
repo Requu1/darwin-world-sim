@@ -175,4 +175,4 @@ agh.ics.oop.app.WorldGUI
 
 ## Author
 
-**Szymon Potępa**
+**Szymon Potępa** / Requu1
