@@ -34,6 +34,7 @@ build/
 .idea/**/httpRequests
 .idea/.cache/.Apifox_Helper
 .idea/ApifoxUploaderProjectSetting.xml
+.idea
 
 # Optional IntelliJ project files
 .idea/modules.xml
